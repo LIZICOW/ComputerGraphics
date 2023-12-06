@@ -1,0 +1,5 @@
+/home/ritzning/ComputerGraphics/bigHW/build/CMakeFiles/rebuild_cache.dir
+/home/ritzning/ComputerGraphics/bigHW/build/CMakeFiles/edit_cache.dir
+/home/ritzning/ComputerGraphics/bigHW/build/src/CMakeFiles/rebuild_cache.dir
+/home/ritzning/ComputerGraphics/bigHW/build/src/CMakeFiles/edit_cache.dir
+/home/ritzning/ComputerGraphics/bigHW/build/src/CMakeFiles/sample.dir

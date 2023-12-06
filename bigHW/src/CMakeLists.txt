@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.0)
+project(sample)
+find_package (OpenGL REQUIRED)
+find_package (glfw3 REQUIRED)
+find_package (GLEW REQUIRED)
+include_directories(${CMAKE_SOURCE_DIR}
+/include)
+set(SOURCE_FILES main.cpp manResource.cpp)
+add_executable(sample ${SOURCE_FILES})
+target_link_libraries (sample ${OPENGL_LIBRARIES} glfw GLEW::GLEW )
