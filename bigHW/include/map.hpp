@@ -8,30 +8,31 @@
 
 #include "../include/manResource.hpp"
 
-#define FLOOR_NUM 10
-#define WATER_NUM 10
+#define FLOOR_NUM 20
+#define WATER_NUM 20
 #define BACKGROUND_NUM_X 30
-#define BACKGROUND_NUM_Z 20
+#define BACKGROUND_NUM_Z 5
+#define VERTICAL_NUM 8
 
 enum TextureID{
     FLOOR1, FLOOR2, FLOOR3, FLOOR4,
-    WATER, BACKGROUND
+    WATER, BACKGROUND1, BACKGROUND2, VERTICAL
 };
 const char* TextureName[] = {
     "floor1", "floor2", "floor3", "floor4",
-    "water", "background"
+    "water", "background1", "background2", "vertical"
 };
 
 class Floor{
 public:
     GLuint VAO, VBO;    
     const std::vector<GLfloat> points = {
-        2.5f, 0.0f, 2.5f, 1.0f, 1.0f,
-        -2.5f, 0.0f, 2.5f, 0.0f, 1.0f,
-        -2.5f, 0.0f, -2.5f, 0.0f, 0.0f,
-        -2.5f, 0.0f, -2.5f, 0.0f, 0.0f,
-        2.5f, 0.0f, -2.5f, 1.0f, 0.0f,
-        2.5f, 0.0f, 2.5f, 1.0f, 1.0f,
+        2.5f, 0.0f, 2.5f,   0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+        -2.5f, 0.0f, 2.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+        -2.5f, 0.0f, -2.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        -2.5f, 0.0f, -2.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        2.5f, 0.0f, -2.5f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        2.5f, 0.0f, 2.5f,   0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
     };
     glm::vec3 pos, scale;
     glm::mat4 rotate;
@@ -55,10 +56,12 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
         glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(GLfloat), points.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
         glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)(6 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(2);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
@@ -68,7 +71,7 @@ public:
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
                                                 (float)WINDOW_W / (float)WINDOW_H,
-                                                0.1f, 1000.0f);
+                                                0.1f, 50.0f);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, this->pos);
         model = glm::scale(model, this->scale);
@@ -78,10 +81,18 @@ public:
         ResourceManager::GetShader("map").setMat4("view", view);    
         ResourceManager::GetShader("map").setMat4("projection", projection);    
         ResourceManager::GetShader("map").setMat4("model", model); 
+        ResourceManager::GetShader("map").setVec3("viewPos", camera.Position); 
+        ResourceManager::GetShader("map").setFloat("Distance", calDistance(camera.Position, this->pos)); 
+        ResourceManager::GetShader("map").setFloat("maxDistance", 50.0f); 
 
         ResourceManager::GetTexture(TextureName[texture]).Bind();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, points.size() / 3);
+    }
+
+    float calDistance(glm::vec3 vec1, glm::vec3 vec2)
+    {
+        return sqrt((vec1.x - vec2.x) * (vec1.x - vec2.x) + (vec1.y - vec2.y) * (vec1.y - vec2.y) + (vec1.z - vec2.z) * (vec1.z - vec2.z));
     }
 
     ~Floor(){
@@ -115,7 +126,9 @@ Map::Map(/* args */)
     ResourceManager::LoadTexture("../resources/textures/floor3.png", false, "floor3");
     ResourceManager::LoadTexture("../resources/textures/floor4.png", false, "floor4");
     ResourceManager::LoadTexture("../resources/textures/blue.png", false, "water");
-    ResourceManager::LoadTexture("../resources/textures/yellow.png", true, "background");
+    ResourceManager::LoadTexture("../resources/textures/yellow.png", true, "background1");
+    ResourceManager::LoadTexture("../resources/textures/orange.png", true, "background2");
+    ResourceManager::LoadTexture("../resources/textures/verti.png", true, "vertical");
 }
 
 void Map::init(){
@@ -139,10 +152,10 @@ void Map::init(){
         water[i]->init();
     }  
    
-    for(int j = 0;j<3;j++){
+    for(int j = 0;j<VERTICAL_NUM;j++){
         std::vector<Floor*> v;
         for (int i = 0; i < WATER_NUM * 2; i++){
-            v.push_back(new Floor(rand() % 4, glm::vec3(pos[i], -0.25, -5 * j + 2.5), glm::vec3(1.0f, 0.1f, 1.0f)));
+            v.push_back(new Floor(VERTICAL, glm::vec3(pos[i], -0.25, -5 * j + 2.5), glm::vec3(1.0f, 0.1f, 1.0f)));
             v[i]->setRotate(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
             v[i]->init();
         }
@@ -151,7 +164,8 @@ void Map::init(){
     for (int i = 0; i < BACKGROUND_NUM_Z; i++){
         std::vector<Floor*> back;
         for (int j = -FLOOR_NUM; j < BACKGROUND_NUM_X; j++){
-            back.push_back(new Floor(BACKGROUND, glm::vec3(j * 5, 0.0, -(i + 2) * 5)));
+            int type = (i%2) ? BACKGROUND1 : BACKGROUND2;
+            back.push_back(new Floor(type, glm::vec3(j * 5, -0.1 * (i % 2), -(i + 2) * 5)));
         }
         background.push_back(back);
     }
@@ -188,7 +202,7 @@ void Map::update(float delta){
         }
         if (verticleFloor[j][0]->pos.x < -WATER_NUM * 5 - 2.5){
             verticleFloor[j].erase(verticleFloor[j].begin());
-            verticleFloor[j].push_back(new Floor(rand()%4, 
+            verticleFloor[j].push_back(new Floor(VERTICAL, 
                 glm::vec3(verticleFloor[j][verticleFloor[j].size() - 1]->pos.x + 5, -0.25, -5 * j + 2.5),
                 glm::vec3(1.0f, 0.1f, 1.0f)));
             verticleFloor[j][verticleFloor[j].size() - 1]->setRotate(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
@@ -201,8 +215,9 @@ void Map::update(float delta){
         }
         if (background[i][0]->pos.x < -FLOOR_NUM * 5 - 2.5){
             background[i].erase(background[i].begin());
-            background[i].push_back(new Floor(BACKGROUND, 
-                glm::vec3(background[i][background[i].size() - 1]->pos.x + 5, -0.0, -(i + 2) * 5)));
+            int type = (i % 2) ? BACKGROUND1 : BACKGROUND2;
+            background[i].push_back(new Floor(type, 
+                glm::vec3(background[i][background[i].size() - 1]->pos.x + 5, -0.1 * (i % 2), -(i + 2) * 5)));
             background[i][background[i].size() - 1]->init();
         }
     }

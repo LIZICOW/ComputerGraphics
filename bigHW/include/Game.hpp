@@ -80,7 +80,7 @@ void Game::ProcessInput(){
 
 void Game::jump(){
     if(!jumpLock){
-        jumpV = 6;
+        jumpV = 8;
         jumpLock = true;
     }
 }
@@ -100,7 +100,7 @@ void Game::Update(){
     if(Obstacle_q.size() < maxObstacle){
         if(rand() % 10000 < prob){
             if(rand() % 10 < 5)
-                Obstacle_q.push_back(new Model("chahu2", glm::vec3(10.0f, 0.5f, 0.0f), glm::vec3(0.1f, 0.5f, 0.1f), glm::vec3(0.1f, 0.5f, 0.1f)));
+                Obstacle_q.push_back(new Model("xianren", glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.04f, 0.04f, 0.04f), glm::vec3(0.1f, 0.5f, 0.1f)));
             else
                 Obstacle_q.push_back(new Model("chahu2", glm::vec3(10.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.1f, 0.5f), glm::vec3(0.5f, 0.1f, 0.5f)));
             Obstacle_q[Obstacle_q.size() - 1]->loadModel();
@@ -121,12 +121,12 @@ void Game::Update(){
     for(auto& [name, model]:Mdl){
         if(name == "dragon"){
             if(jumpLock){
-                float v = jumpV - 3;
+                float v = jumpV - 4;
                 model->pos.y += v * deltaTime;
                 jumpV -= deltaTime * 5;
                 for (auto &x : Obstacle_q)
                 {
-                    x->pos.x -= 0.3 * deltaTime;
+                    x->pos.x -= 0.4 * deltaTime;
                     if (x->pos.x < -3)
                         remove = true;
                 }

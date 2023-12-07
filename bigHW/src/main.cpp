@@ -117,12 +117,12 @@ int main(void)
 
     std::vector<std::string> faces
     {
-        "../resources/skybox/right.png",
-        "../resources/skybox/left.png",
-        "../resources/skybox/top.png",
-        "../resources/skybox/bottom.png",
-        "../resources/skybox/front.png",
-        "../resources/skybox/back.png"
+        "../resources/skybox/right.jpg",
+        "../resources/skybox/left.jpg",
+        "../resources/skybox/top.jpg",
+        "../resources/skybox/bottom.jpg",
+        "../resources/skybox/front.jpg",
+        "../resources/skybox/back.jpg"
     };
     unsigned int cubemapTexture = loadCubemap(faces);
     ResourceManager::GetShader("skybox").setInt("skybox", 0);
