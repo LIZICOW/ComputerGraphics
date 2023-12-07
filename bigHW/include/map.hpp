@@ -3,83 +3,250 @@
 #include <GL/glew.h>
 #include <vector>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "../include/manResource.hpp"
+
+#define FLOOR_NUM 10
+#define WATER_NUM 10
+#define BACKGROUND_NUM_X 30
+#define BACKGROUND_NUM_Z 20
+
+enum TextureID{
+    FLOOR1, FLOOR2, FLOOR3, FLOOR4,
+    WATER, BACKGROUND
+};
+const char* TextureName[] = {
+    "floor1", "floor2", "floor3", "floor4",
+    "water", "background"
+};
+
+class Floor{
+public:
+    GLuint VAO, VBO;    
+    const std::vector<GLfloat> points = {
+        2.5f, 0.0f, 2.5f, 1.0f, 1.0f,
+        -2.5f, 0.0f, 2.5f, 0.0f, 1.0f,
+        -2.5f, 0.0f, -2.5f, 0.0f, 0.0f,
+        -2.5f, 0.0f, -2.5f, 0.0f, 0.0f,
+        2.5f, 0.0f, -2.5f, 1.0f, 0.0f,
+        2.5f, 0.0f, 2.5f, 1.0f, 1.0f,
+    };
+    glm::vec3 pos, scale;
+    glm::mat4 rotate;
+    int texture;
+public:
+    Floor(int tex, glm::vec3 p = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 s = glm::vec3(1.0f, 1.0f, 1.0f)):pos(p), scale(s){
+        texture = tex;
+        rotate = glm::mat4(1.0f);
+    }
+
+    void setRotate(glm::mat4 m){
+        rotate = m;
+    }
+
+    void init(){
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+
+        glBindVertexArray(VAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+        glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(GLfloat), points.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(1);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
+
+    void render(){
+        glm::mat4 view = camera.GetViewMatrix();
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
+                                                (float)WINDOW_W / (float)WINDOW_H,
+                                                0.1f, 1000.0f);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, this->pos);
+        model = glm::scale(model, this->scale);
+        model = model * rotate;
+        
+        ResourceManager::GetShader("map").use();    
+        ResourceManager::GetShader("map").setMat4("view", view);    
+        ResourceManager::GetShader("map").setMat4("projection", projection);    
+        ResourceManager::GetShader("map").setMat4("model", model); 
+
+        ResourceManager::GetTexture(TextureName[texture]).Bind();
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, points.size() / 3);
+    }
+
+    ~Floor(){
+        glDeleteBuffers(1, &VAO);
+        glDeleteBuffers(1, &VBO);
+    }
+};
 
 class Map
 {
 protected:
-    GLuint VAO, VBO;
+    std::vector<Floor*> floor, water;
+    std::vector<std::vector<Floor*>> background, verticleFloor;
     GLfloat centerX, centerY, centerZ;
-    GLfloat L, W; //长宽
-    std::vector<GLfloat> points;
 
 public:
     Map();
     void init();
     void render();
+    void update(float delta);
     ~Map();
 };
 
 Map::Map(/* args */)
 {
     centerX = centerY = centerZ = 0;
-    L = 25;
-    W = 2.5;
     ResourceManager::LoadShader("../shader/mapShader.vs", "../shader/mapShader.fs", nullptr, "map");
     ResourceManager::GetShader("map").use().setVec3("color", glm::vec3(1.0f, 1.0f, 0.2f));
+    ResourceManager::LoadTexture("../resources/textures/floor1.png", false, "floor1");
+    ResourceManager::LoadTexture("../resources/textures/floor2.png", false, "floor2");
+    ResourceManager::LoadTexture("../resources/textures/floor3.png", false, "floor3");
+    ResourceManager::LoadTexture("../resources/textures/floor4.png", false, "floor4");
+    ResourceManager::LoadTexture("../resources/textures/blue.png", false, "water");
+    ResourceManager::LoadTexture("../resources/textures/yellow.png", true, "background");
 }
 
 void Map::init(){
-    points.push_back(centerX + L);
-    points.push_back(centerY);
-    points.push_back(centerZ + W);
+    std::vector<GLfloat> pos;
+    for(int i = -FLOOR_NUM;i < FLOOR_NUM;i++){
+        pos.push_back(i * 5);
+    }
 
-    points.push_back(centerX - L);
-    points.push_back(centerY);
-    points.push_back(centerZ + W);
+    for(int i = 0;i < FLOOR_NUM * 2;i++){
+        floor.push_back(new Floor(rand()%4, glm::vec3(pos[i], 0, 0)));
+        floor[i]->init();
+    }
 
-    points.push_back(centerX - L);
-    points.push_back(centerY);
-    points.push_back(centerZ - W);
+    pos.clear();
+    for(int i = -WATER_NUM;i < WATER_NUM;i++){
+        pos.push_back(i * 5);
+    }
 
-    points.push_back(centerX - L);
-    points.push_back(centerY );
-    points.push_back(centerZ - W);
+    for(int i = 0;i < WATER_NUM * 2;i++){
+        water.push_back(new Floor(WATER, glm::vec3(pos[i], -0.5, -5.0)));
+        water[i]->init();
+    }  
+   
+    for(int j = 0;j<3;j++){
+        std::vector<Floor*> v;
+        for (int i = 0; i < WATER_NUM * 2; i++){
+            v.push_back(new Floor(rand() % 4, glm::vec3(pos[i], -0.25, -5 * j + 2.5), glm::vec3(1.0f, 0.1f, 1.0f)));
+            v[i]->setRotate(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+            v[i]->init();
+        }
+        verticleFloor.push_back(v);
+    }
+    for (int i = 0; i < BACKGROUND_NUM_Z; i++){
+        std::vector<Floor*> back;
+        for (int j = -FLOOR_NUM; j < BACKGROUND_NUM_X; j++){
+            back.push_back(new Floor(BACKGROUND, glm::vec3(j * 5, 0.0, -(i + 2) * 5)));
+        }
+        background.push_back(back);
+    }
 
-    points.push_back(centerX + L);
-    points.push_back(centerY);
-    points.push_back(centerZ - W);
+    for(int i = 0;i < background.size();i++){
+        for(int j=0;j<background[i].size();j++){
+            background[i][j]->init();
+        }
+    }
+}
 
-    points.push_back(centerX + L);
-    points.push_back(centerY);
-    points.push_back(centerZ + W);
+void Map::update(float delta){
+    for(int i = 0;i < floor.size();i++){
+        floor[i]->pos.x -= delta;
+    }
+    if(floor[0]->pos.x < -FLOOR_NUM * 5 - 2.5){
+        floor.erase(floor.begin());
+        floor.push_back(new Floor(rand()%4, glm::vec3(floor[floor.size() - 1]->pos.x + 5, 0, 0)));
+        floor[floor.size() - 1]->init();
+    }
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    for(int i = 0;i < water.size();i++){
+        water[i]->pos.x -= delta;
+    }
+    if (water[0]->pos.x < -WATER_NUM * 5 - 2.5){
+        water.erase(water.begin());
+        water.push_back(new Floor(WATER, glm::vec3(water[water.size() - 1]->pos.x + 5, -0.5, -5.0)));
+        water[water.size() - 1]->init();
+    }
 
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(GLfloat), points.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    for(int j = 0;j < verticleFloor.size();j++){
+        for(int i = 0;i < verticleFloor[j].size();i++){
+            verticleFloor[j][i]->pos.x -= delta;
+        }
+        if (verticleFloor[j][0]->pos.x < -WATER_NUM * 5 - 2.5){
+            verticleFloor[j].erase(verticleFloor[j].begin());
+            verticleFloor[j].push_back(new Floor(rand()%4, 
+                glm::vec3(verticleFloor[j][verticleFloor[j].size() - 1]->pos.x + 5, -0.25, -5 * j + 2.5),
+                glm::vec3(1.0f, 0.1f, 1.0f)));
+            verticleFloor[j][verticleFloor[j].size() - 1]->setRotate(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+            verticleFloor[j][verticleFloor[j].size() - 1]->init();
+        }
+    }
+    for (int i = 0; i < background.size(); i++){
+        for (int j = 0; j < background[i].size(); j++){
+            background[i][j]->pos.x -= delta;
+        }
+        if (background[i][0]->pos.x < -FLOOR_NUM * 5 - 2.5){
+            background[i].erase(background[i].begin());
+            background[i].push_back(new Floor(BACKGROUND, 
+                glm::vec3(background[i][background[i].size() - 1]->pos.x + 5, -0.0, -(i + 2) * 5)));
+            background[i][background[i].size() - 1]->init();
+        }
+    }
 }
 
 void Map::render(){
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, points.size() / 3);
+    for (auto& x:floor){
+        x->render();
+    }
+    for (auto &x : water){
+        x->render();
+    }
+    for(int i = 0;i < verticleFloor.size();i++){
+        for(int j=0;j<verticleFloor[i].size();j++){
+            verticleFloor[i][j]->render();
+        }
+    }
+    for(int i = 0;i < background.size();i++){
+        for(int j=0;j<background[i].size();j++){
+            background[i][j]->render();
+        }
+    }
 }
 
 Map::~Map()
 {
-    glDeleteBuffers(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-}
+    for (auto& x:floor){
+        delete x;
+    }
 
+    for (auto &x : water){
+        delete x;
+    }
+    for(int i = 0;i < verticleFloor.size();i++){
+        for(int j=0;j<verticleFloor[i].size();j++){
+            delete verticleFloor[i][j];
+        }
+    }
+
+    for(int i = 0;i < background.size();i++){
+        for(int j=0;j<background[i].size();j++){
+            delete background[i][j];
+        }
+    }
+}
 
 #endif

@@ -7,8 +7,10 @@ src/CMakeFiles/sample.dir/main.cpp.o
  /home/ritzning/ComputerGraphics/bigHW/include/camera.h
  /home/ritzning/ComputerGraphics/bigHW/include/manResource.hpp
  /home/ritzning/ComputerGraphics/bigHW/include/map.hpp
+ /home/ritzning/ComputerGraphics/bigHW/include/mesh.hpp
  /home/ritzning/ComputerGraphics/bigHW/include/model.hpp
  /home/ritzning/ComputerGraphics/bigHW/include/shader.hpp
+ /home/ritzning/ComputerGraphics/bigHW/include/stb_image.h
  /home/ritzning/ComputerGraphics/bigHW/include/texture.hpp
  /home/ritzning/ComputerGraphics/bigHW/src/main.cpp
 src/CMakeFiles/sample.dir/manResource.cpp.o

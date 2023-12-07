@@ -20,7 +20,7 @@ enum GameState{
 };
 
 class Game{
-protected:
+public:
     GLuint W_width, W_height;
     std::map<std::string, Model*> Mdl;
     std::vector<Model*> Obstacle_q;
@@ -62,13 +62,14 @@ Game::~Game(){
 
 void Game::init(){
     ResourceManager::LoadShader("../shader/dragonShader.vs", "../shader/dragonShader.fs", nullptr, "dragon");
+    ResourceManager::LoadTexture("../resources/textures/green.png", false, "green");
 
-    Mdl["dragon"] = new Model("cube");
-
+    Mdl["dragon"] = new Model("dino", glm::vec3(0.0f, 0.8f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f));
     jumpV = 0;
-    for(auto& [name, model]:Mdl){
-        model->init();
-    }
+    Mdl["dragon"]->loadModel();
+    // for(auto& [name, model]:Mdl){
+    //     model->loadModel();
+    // }
 }
 
 
@@ -86,10 +87,12 @@ void Game::jump(){
 
 void Game::lowHead(bool press){
     if(press){
-        Mdl["dragon"]->setScale(glm::vec3(0.5f, 0.5f, 0.5f));
+        Mdl["dragon"]->setScale(glm::vec3(0.02f, 0.007f, 0.01f));
+        Mdl["dragon"]->setPos(glm::vec3(0.0f, 0.6f, 0.0f));
     }
     else{
-        Mdl["dragon"]->setScale(glm::vec3(0.5f, 0.8f, 0.5f));
+        Mdl["dragon"]->setScale(glm::vec3(0.01f, 0.01f, 0.01f));
+        Mdl["dragon"]->setPos(glm::vec3(0.0f, 0.8f, 0.0f));
     }
 }
 
@@ -97,10 +100,10 @@ void Game::Update(){
     if(Obstacle_q.size() < maxObstacle){
         if(rand() % 10000 < prob){
             if(rand() % 10 < 5)
-                Obstacle_q.push_back(new Model("cube", glm::vec3(10.0f, 0.5f, 0.0f), glm::vec3(0.1f, 0.5f, 0.1f)));
+                Obstacle_q.push_back(new Model("chahu2", glm::vec3(10.0f, 0.5f, 0.0f), glm::vec3(0.1f, 0.5f, 0.1f), glm::vec3(0.1f, 0.5f, 0.1f)));
             else
-                Obstacle_q.push_back(new Model("cube", glm::vec3(10.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.1f, 0.5f)));
-            Obstacle_q[Obstacle_q.size() - 1]->init();
+                Obstacle_q.push_back(new Model("chahu2", glm::vec3(10.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.1f, 0.5f), glm::vec3(0.5f, 0.1f, 0.5f)));
+            Obstacle_q[Obstacle_q.size() - 1]->loadModel();
             prob = 0;
         }
         else{
@@ -115,7 +118,6 @@ void Game::Update(){
             remove = true;
         }
     }
-
     for(auto& [name, model]:Mdl){
         if(name == "dragon"){
             if(jumpLock){
@@ -131,6 +133,14 @@ void Game::Update(){
                 if(jumpV < 0)
                     jumpLock = false;
             }
+            if( Obstacle_q.size() > 0 &&
+                model->collision.x + model->pos.x > Obstacle_q[0]->collision.x + Obstacle_q[0]->pos.x &&
+                model->pos.x - model->collision.y < Obstacle_q[0]->pos.y + Obstacle_q[0]->collision.y
+            ){
+                // std::cout<<"collision!!!"<<rand()<<"\n";
+            }
+
+
             model->render();
             continue;
         }

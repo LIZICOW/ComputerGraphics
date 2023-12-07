@@ -1,1 +1,1 @@
-/usr/bin/c++    -rdynamic CMakeFiles/sample.dir/main.cpp.o CMakeFiles/sample.dir/manResource.cpp.o  -o sample  -lGL -lGLU /usr/local/lib/libglfw3.a /usr/lib/x86_64-linux-gnu/libGLEW.so -lpthread -lrt -lm -ldl 
+/usr/bin/c++    -rdynamic CMakeFiles/sample.dir/main.cpp.o CMakeFiles/sample.dir/manResource.cpp.o  -o sample  -lGL -lGLU /usr/local/lib/libglfw3.a /usr/lib/x86_64-linux-gnu/libGLEW.so -lassimp -lpthread -lrt -lm -ldl 

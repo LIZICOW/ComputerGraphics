@@ -1,0 +1,44 @@
+#include <iostream>
+#include "../include/model.hpp"
+
+int main(){
+    Model m("../resources/models/dragon.txt", "test");
+    return 0;
+}
+
+    float x = 10.0, y = 1.0;
+    points.push_back(centerX + L);
+    points.push_back(centerY);
+    points.push_back(centerZ + W);
+    points.push_back(x);
+    points.push_back(y);
+
+    points.push_back(centerX - L);
+    points.push_back(centerY);
+    points.push_back(centerZ + W);
+    points.push_back(0.0f);
+    points.push_back(y);
+
+    points.push_back(centerX - L);
+    points.push_back(centerY);
+    points.push_back(centerZ - W);
+    points.push_back(0.0f);
+    points.push_back(0.0f);
+
+    points.push_back(centerX - L);
+    points.push_back(centerY );
+    points.push_back(centerZ - W);
+    points.push_back(0.0f);
+    points.push_back(0.0f);
+
+    points.push_back(centerX + L);
+    points.push_back(centerY);
+    points.push_back(centerZ - W);
+    points.push_back(x);
+    points.push_back(0.0f);
+
+    points.push_back(centerX + L);
+    points.push_back(centerY);
+    points.push_back(centerZ + W);
+    points.push_back(x);
+    points.push_back(y);

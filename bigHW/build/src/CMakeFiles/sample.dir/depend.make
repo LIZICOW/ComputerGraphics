@@ -6,8 +6,10 @@ src/CMakeFiles/sample.dir/main.cpp.o: ../include/GraphLine.hpp
 src/CMakeFiles/sample.dir/main.cpp.o: ../include/camera.h
 src/CMakeFiles/sample.dir/main.cpp.o: ../include/manResource.hpp
 src/CMakeFiles/sample.dir/main.cpp.o: ../include/map.hpp
+src/CMakeFiles/sample.dir/main.cpp.o: ../include/mesh.hpp
 src/CMakeFiles/sample.dir/main.cpp.o: ../include/model.hpp
 src/CMakeFiles/sample.dir/main.cpp.o: ../include/shader.hpp
+src/CMakeFiles/sample.dir/main.cpp.o: ../include/stb_image.h
 src/CMakeFiles/sample.dir/main.cpp.o: ../include/texture.hpp
 src/CMakeFiles/sample.dir/main.cpp.o: ../src/main.cpp
 
