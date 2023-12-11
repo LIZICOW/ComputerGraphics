@@ -1,12 +1,12 @@
 #ifndef MAP_H
 #define MAP_H
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "../include/manResource.hpp"
+#include "manResource.hpp"
 
 #define FLOOR_NUM 20
 #define WATER_NUM 20

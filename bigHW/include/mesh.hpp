@@ -3,12 +3,12 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <GL/glew.h> 
+#include <glad/glad.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../include/manResource.hpp"
+#include "manResource.hpp"
 
 #include <string>
 #include <vector>

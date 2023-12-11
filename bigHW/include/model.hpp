@@ -1,14 +1,17 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include "manResource.hpp"
-#include "../include/camera.h"
-#include "../include/mesh.hpp"
-#include "../include/stb_image.h"
+#include "camera.h"
+#include "mesh.hpp"
+#define STB_IMAGE_IMPLEMENTATION
+#include "../../src/stb_image.h"
 #include <string>
 #include <vector>
 #include <fstream>
 
-#include <GL/glew.h>
+#define WINDOW_H 900
+#define WINDOW_W 1200
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
