@@ -20,6 +20,7 @@ class Model
 {
 public:
     GLuint VAO, VBO;
+    int ID;
     std::string name;
     std::vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     std::vector<Mesh>    meshes;
@@ -29,7 +30,10 @@ public:
 public:
     Model(std::string n, glm::vec3 p, glm::vec3 s, glm::vec3 col);
     Model();
-    void init();
+    void init(glm::vec3 p, glm::vec3 s);
+    void setID(int id){
+        ID = id;
+    }
     void loadModel();
     void processNode(aiNode *node, const aiScene *scene);
     std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
@@ -41,8 +45,11 @@ public:
     ~Model();
 };
 
+
+
 Model::Model()
 {
+
 }
 
 Model::Model(std::string n, glm::vec3 p = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 s = glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3 col = glm::vec3(0.5f, 0.5f, 0.5f))
@@ -53,116 +60,10 @@ Model::Model(std::string n, glm::vec3 p = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3
     this->collision = col;
 }
 
-void Model::init()
+void Model::init(glm::vec3 p, glm::vec3 s)
 {
-    /*    std::string path = dirpath + this->name + "_outline.txt";
-        std::ifstream in(path);
-        if(!in.is_open()){
-            std::cout<<"can not open "<<this->name<<" model file: "<<path<<'\n';
-            return;
-        }
-        float x, y, x_old, y_old;
-        in >> x_old >> y_old;
-        while(in >> x >> y){
-            //two triangles
-            points.push_back(x_old);
-            points.push_back(y_old);
-            points.push_back(-0.5);
-
-            points.push_back(x_old);
-            points.push_back(y_old);
-            points.push_back(0.5);
-
-            points.push_back(x);
-            points.push_back(y);
-            points.push_back(0.5);
-
-
-            points.push_back(x);
-            points.push_back(y);
-            points.push_back(-0.5);
-
-            points.push_back(x);
-            points.push_back(y);
-            points.push_back(0.5);
-
-            points.push_back(x_old);
-            points.push_back(y_old);
-            points.push_back(-0.5);
-
-            x_old = x;
-            y_old = y;
-        }
-        in.close();
-
-        path = dirpath + this->name + "_cover.txt";
-        in.open(path);
-        if(!in.is_open()){
-            std::cout<<"can not open "<<this->name<<" model file: "<<path<<'\n';
-            return;
-        }
-
-        float xul, yul, xur, yur;
-        float xdl, ydl, xdr, ydr;
-        while(
-            in >> xul >> yul
-               >> xur >> yur
-               >> xdl >> ydl
-               >> xdr >> ydr
-        ){
-            points.push_back(xul);
-            points.push_back(yul);
-            points.push_back(0.5);
-
-            points.push_back(xur);
-            points.push_back(yur);
-            points.push_back(0.5);
-
-            points.push_back(xdl);
-            points.push_back(ydl);
-            points.push_back(0.5);
-
-            points.push_back(xdl);
-            points.push_back(ydl);
-            points.push_back(0.5);
-
-            points.push_back(xdr);
-            points.push_back(ydr);
-            points.push_back(0.5);
-
-            points.push_back(xur);
-            points.push_back(yur);
-            points.push_back(0.5);
-        }
-    */
-    std::string path = dirpath + this->name + ".txt";
-    std::ifstream in(path);
-    if (!in.is_open())
-    {
-        std::cout << "can not open " << this->name << " model file: " << path << '\n';
-        return;
-    }
-    GLfloat x, y, z;
-    while (in >> x >> y >> z)
-    {
-        points.push_back(x);
-        points.push_back(y);
-        points.push_back(z);
-    }
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(GLfloat), points.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    this->pos = p;
+    this->scale = s;
 }
 
 void Model::loadModel()

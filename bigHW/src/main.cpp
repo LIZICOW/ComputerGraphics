@@ -117,12 +117,12 @@ int main(void)
 
     std::vector<std::string> faces
     {
-        "../resources/skybox/right.jpg",
-        "../resources/skybox/left.jpg",
-        "../resources/skybox/top.jpg",
-        "../resources/skybox/bottom.jpg",
-        "../resources/skybox/front.jpg",
-        "../resources/skybox/back.jpg"
+        "../resources/TropicalSunnyDay/TropicalSunnyDayLeft2048.png",
+        "../resources/TropicalSunnyDay/TropicalSunnyDayRight2048.png",
+        "../resources/TropicalSunnyDay/TropicalSunnyDayUp2048.png",
+        "../resources/TropicalSunnyDay/TropicalSunnyDayDown2048.png",
+        "../resources/TropicalSunnyDay/TropicalSunnyDayFront2048.png",
+        "../resources/TropicalSunnyDay/TropicalSunnyDayBack2048.png",
     };
     unsigned int cubemapTexture = loadCubemap(faces);
     ResourceManager::GetShader("skybox").setInt("skybox", 0);
@@ -155,13 +155,13 @@ int main(void)
                                             (float)WINDOW_W / (float)WINDOW_H, 
                                             0.1f, 100.0f);
         glm::mat4 model = glm::mat4(1.0f); 
-        map.update(0.05);   
+        map.update(0.1);   
         if(cnt == 5){
             game.Mdl["dragon"]->scale *= glm::vec3(1.0f, 1.0f,-1.0f);
         }
         map.render();
 
-        ResourceManager::GetTexture("green").Bind();  
+        // ResourceManager::GetTexture("green").Bind();  
         game.Update();
 
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content

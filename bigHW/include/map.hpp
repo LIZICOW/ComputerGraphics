@@ -23,6 +23,14 @@ const char* TextureName[] = {
     "water", "background1", "background2", "vertical"
 };
 
+static inline float randf(float min, float max, int precision = 1000)
+{
+    if (min > max) std::swap(min, max);
+    float delta = max - min;
+    auto i = int(delta * precision);
+    return ((float)(rand() % i) / (float)precision) + min;
+}
+
 class Floor{
 public:
     GLuint VAO, VBO;    
@@ -101,10 +109,117 @@ public:
     }
 };
 
+class Water
+{
+private:
+    /* data */
+    std::vector<GLfloat> points;
+    std::vector<GLuint> indices;
+    int waterWidth = 50;
+    int waterLength = 300;
+    unsigned int VBO, EBO, VAO;
+    glm::vec3 pos;
+    struct GerstnerWave
+    {
+        /* data */
+        float s;
+        float w;
+        float l;
+        glm::vec2 D;
+    }waves[10];
+public:
+    Water(){
+        pos = glm::vec3(0.0, -0.5, -5.0);
+    }
+    void init(){
+        for(int i = 0;i < waterLength; i++){
+            for(int j = 0;j < waterWidth; j++){
+                points.push_back((i - waterWidth / 2.0) / 10.0); // x
+                points.push_back(0.0);                           // y
+                points.push_back((j - waterWidth / 2.0) / 10.0); // z
+            }
+        }
+        /**  (i,j) = width * i + j
+         * 
+         *      *(i, j)  *(i+1, j)
+         *      *(i,j+1) *(i+1,j+1)
+        */
+        for(int i = 0;i < waterLength - 1; i++){
+            for(int j = 0;j < waterWidth - 1; j++){
+                indices.push_back(i * waterWidth + j); 
+                indices.push_back(i * waterWidth + j + 1);                           
+                indices.push_back((i + 1) * waterWidth + j + 1); 
+                indices.push_back(i * waterWidth + j); 
+                indices.push_back((i + 1) * waterWidth + j);                           
+                indices.push_back((i + 1) * waterWidth + j + 1); 
+            }
+        }
+        glGenVertexArrays(1, &VAO);
+        glBindVertexArray(VAO);
+        glGenBuffers(1, &VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * points.size(), points.data(), GL_STATIC_DRAW);
+        glGenBuffers(1, &EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+        srand((unsigned int)time(nullptr));
+        int r = rand() % 100, waveCnt = 10;
+        glm::vec2 windDir = glm::vec2(cosf(r), sinf(r));
+        ResourceManager::GetShader("water").use();
+        ResourceManager::GetShader("water").setInt("waveCnt", waveCnt);
+        for (int i = 0; i < waveCnt; ++i) {
+
+            waves[i].s = randf(0.1f, 0.2f);
+            ResourceManager::GetShader("water").setFloat("wave[" + std::to_string(i) + "].s", waves[i].s);
+
+            // The wave direction is determined by wind direction
+            // but have a random angle to the wind direction
+            float windAngle = acosf((windDir.x/sqrtf(windDir.x*windDir.x + windDir.y*windDir.y)));
+            if (windDir.y < 0) windAngle = -windAngle;
+            float waveAngle = randf(windAngle - glm::radians(60.0f),
+                                    windAngle + glm::radians(60.0f));
+            waves[i].D.x = cos(waveAngle);
+            waves[i].D.y = sin(waveAngle);
+            ResourceManager::GetShader("water").setVec2("wave[" + std::to_string(i) + "].D", waves[i].D);
+
+            waves[i].w = randf(2.5f, 3.0f);
+            ResourceManager::GetShader("water").setFloat("wave[" + std::to_string(i) + "].w", waves[i].w);
+
+            waves[i].l = randf(1.0f, 3.0f);
+            ResourceManager::GetShader("water").setFloat("wave[" + std::to_string(i) + "].l", waves[i].l);
+        }
+    }
+
+    void render(){
+        glm::mat4 view = camera.GetViewMatrix();
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
+                                                (float)WINDOW_W / (float)WINDOW_H,
+                                                0.1f, 50.0f);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, this->pos);
+
+        ResourceManager::GetShader("water").use();
+        ResourceManager::GetShader("water").setMat4("model", model);
+        ResourceManager::GetShader("water").setMat4("view", view);
+        ResourceManager::GetShader("water").setMat4("projection", projection);
+        ResourceManager::GetShader("water").setFloat("time", static_cast<float>(glfwGetTime()));
+        ResourceManager::GetShader("water").setVec3("deepWaterColor", glm::vec3(0.1137f, 0.2745f, 0.4392f));
+        ResourceManager::GetShader("water").setVec3("shallowWaterColor", glm::vec3(0.45f, 0.55f, 0.7f));
+        ResourceManager::GetShader("water").setVec3("viewPos", camera.Position);
+        ResourceManager::GetShader("water").setVec3("lightDir", glm::vec3(10.0f, 1.0f, -12.0f));
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, indices.size() , GL_UNSIGNED_INT, nullptr);
+    }
+};
+
 class Map
 {
 protected:
-    std::vector<Floor*> floor, water;
+    std::vector<Floor*> floor;
+    Water water;
     std::vector<std::vector<Floor*>> background, verticleFloor;
     GLfloat centerX, centerY, centerZ;
 
@@ -120,6 +235,7 @@ Map::Map(/* args */)
 {
     centerX = centerY = centerZ = 0;
     ResourceManager::LoadShader("../shader/mapShader.vs", "../shader/mapShader.fs", nullptr, "map");
+    ResourceManager::LoadShader("../shader/waterShader.vs", "../shader/waterShader.fs", nullptr, "water");
     ResourceManager::GetShader("map").use().setVec3("color", glm::vec3(1.0f, 1.0f, 0.2f));
     ResourceManager::LoadTexture("../resources/textures/floor1.png", false, "floor1");
     ResourceManager::LoadTexture("../resources/textures/floor2.png", false, "floor2");
@@ -142,16 +258,18 @@ void Map::init(){
         floor[i]->init();
     }
 
-    pos.clear();
-    for(int i = -WATER_NUM;i < WATER_NUM;i++){
-        pos.push_back(i * 5);
-    }
+    // pos.clear();
+    // for(int i = -WATER_NUM;i < WATER_NUM;i++){
+    //     pos.push_back(i * 5);
+    // }
 
-    for(int i = 0;i < WATER_NUM * 2;i++){
-        water.push_back(new Floor(WATER, glm::vec3(pos[i], -0.5, -5.0)));
-        water[i]->init();
-    }  
-   
+    // for(int i = 0;i < WATER_NUM * 2;i++){
+    //     water.push_back(new Floor(WATER, glm::vec3(pos[i], -0.5, -5.0)));
+    //     water[i]->init();
+    // }  
+    water.init();
+
+
     for(int j = 0;j<VERTICAL_NUM;j++){
         std::vector<Floor*> v;
         for (int i = 0; i < WATER_NUM * 2; i++){
@@ -187,14 +305,14 @@ void Map::update(float delta){
         floor[floor.size() - 1]->init();
     }
 
-    for(int i = 0;i < water.size();i++){
-        water[i]->pos.x -= delta;
-    }
-    if (water[0]->pos.x < -WATER_NUM * 5 - 2.5){
-        water.erase(water.begin());
-        water.push_back(new Floor(WATER, glm::vec3(water[water.size() - 1]->pos.x + 5, -0.5, -5.0)));
-        water[water.size() - 1]->init();
-    }
+    // for(int i = 0;i < water.size();i++){
+    //     water[i]->pos.x -= delta;
+    // }
+    // if (water[0]->pos.x < -WATER_NUM * 5 - 2.5){
+    //     water.erase(water.begin());
+    //     water.push_back(new Floor(WATER, glm::vec3(water[water.size() - 1]->pos.x + 5, -0.5, -5.0)));
+    //     water[water.size() - 1]->init();
+    // }
 
     for(int j = 0;j < verticleFloor.size();j++){
         for(int i = 0;i < verticleFloor[j].size();i++){
@@ -227,9 +345,10 @@ void Map::render(){
     for (auto& x:floor){
         x->render();
     }
-    for (auto &x : water){
-        x->render();
-    }
+    // for (auto &x : water){
+    //     x->render();
+    // }
+    water.render();
     for(int i = 0;i < verticleFloor.size();i++){
         for(int j=0;j<verticleFloor[i].size();j++){
             verticleFloor[i][j]->render();
@@ -247,10 +366,9 @@ Map::~Map()
     for (auto& x:floor){
         delete x;
     }
-
-    for (auto &x : water){
-        delete x;
-    }
+    // for (auto &x : water){
+    //     delete x;
+    // }
     for(int i = 0;i < verticleFloor.size();i++){
         for(int j=0;j<verticleFloor[i].size();j++){
             delete verticleFloor[i][j];

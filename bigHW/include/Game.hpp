@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <queue>
+#include <set>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -24,8 +25,10 @@ public:
     GLuint W_width, W_height;
     std::map<std::string, Model*> Mdl;
     std::vector<Model*> Obstacle_q;
-    const int maxObstacle = 5;
-    const float deltaTime = 0.05;
+    std::vector<Model*> Obstacle_pool;
+    std::set<int> useObstacle;
+    const int maxObstacle = 3;
+    const float deltaTime = 0.1;
     float jumpV;
     int prob = 0;
     bool jumpLock = false;
@@ -70,6 +73,12 @@ void Game::init(){
     // for(auto& [name, model]:Mdl){
     //     model->loadModel();
     // }
+    for(int i = 0;i < 5; i++){
+        Obstacle_pool.push_back(new Model("xianren", glm::vec3(20.0f, 0.0f, 0.0f), glm::vec3(0.03f, 0.03f, 0.03f), glm::vec3(0.1f, 0.5f, 0.1f)));
+        Obstacle_pool[Obstacle_pool.size() - 1]->loadModel();
+        Obstacle_pool.push_back(new Model("chahu2", glm::vec3(20.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.1f, 0.5f), glm::vec3(0.5f, 0.1f, 0.5f)));
+        Obstacle_pool[Obstacle_pool.size() - 1]->loadModel();
+    }
 }
 
 
@@ -99,11 +108,29 @@ void Game::lowHead(bool press){
 void Game::Update(){
     if(Obstacle_q.size() < maxObstacle){
         if(rand() % 10000 < prob){
-            if(rand() % 10 < 5)
-                Obstacle_q.push_back(new Model("xianren", glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.04f, 0.04f, 0.04f), glm::vec3(0.1f, 0.5f, 0.1f)));
-            else
-                Obstacle_q.push_back(new Model("chahu2", glm::vec3(10.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.1f, 0.5f), glm::vec3(0.5f, 0.1f, 0.5f)));
-            Obstacle_q[Obstacle_q.size() - 1]->loadModel();
+            int index, num = 500;
+            while(num--){
+                // std::cout<<"ok\n";
+                index = rand() % 10;
+                if(useObstacle.count(index) == 0){
+                    useObstacle.insert(index);
+                    break;
+                }
+            }
+            if(num){
+                Obstacle_q.push_back(Obstacle_pool[index]);
+                Obstacle_q[Obstacle_q.size() - 1]->setID(index);
+            // std::cout<<"no "<<Obstacle_q.size()<<' '<<index<<'\n'; 
+            // std::cout<<Obstacle_q[Obstacle_q.size() - 1]->name<<'\n';
+                if(Obstacle_q[Obstacle_q.size() - 1]->name == "xianren")
+                    Obstacle_q[Obstacle_q.size() - 1]->init(glm::vec3(20.0f, 0.0f, 0.0f), glm::vec3(0.03f, 0.03f, 0.03f));
+                else if (Obstacle_q[Obstacle_q.size() - 1]->name == "chahu2")
+                {
+                    Obstacle_q[Obstacle_q.size() - 1]->init(glm::vec3(20.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.1f, 0.5f));
+                } 
+            }
+
+                      
             prob = 0;
         }
         else{
@@ -122,14 +149,9 @@ void Game::Update(){
         if(name == "dragon"){
             if(jumpLock){
                 float v = jumpV - 4;
-                model->pos.y += v * deltaTime;
-                jumpV -= deltaTime * 5;
-                for (auto &x : Obstacle_q)
-                {
-                    x->pos.x -= 0.4 * deltaTime;
-                    if (x->pos.x < -3)
-                        remove = true;
-                }
+                model->pos.y += v * deltaTime / 2;
+                jumpV -= deltaTime * 5 / 2;
+
                 if(jumpV < 0)
                     jumpLock = false;
             }
@@ -156,8 +178,9 @@ void Game::Update(){
         }
     }
     if(remove){
-        delete Obstacle_q[0];
+        int id = Obstacle_q[0]->ID;
         Obstacle_q.erase(Obstacle_q.begin());
+        useObstacle.erase(id);
     }
 }
 
