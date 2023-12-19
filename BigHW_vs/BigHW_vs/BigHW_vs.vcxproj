@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\PhysicalEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\stb_image.h" />
@@ -89,8 +88,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Code\C++\2023 Autumn\Computer Graphics\Projects\ComputerGraphics\include;$(IncludePath)</IncludePath>
-    <ReferencePath>D:\Code\C++\2023 Autumn\Computer Graphics\Projects\ComputerGraphics\lib;$(ReferencePath)</ReferencePath>
+    <IncludePath>E:\ComputerGraphics\include;$(IncludePath)</IncludePath>
+    <ReferencePath>E:\ComputerGraphics\lib;$(ReferencePath)</ReferencePath>
     <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -131,7 +130,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Code\C++\2023 Autumn\Computer Graphics\Projects\ComputerGraphics\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\ComputerGraphics\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>bullet_lib.lib;kernel32.lib;glfw3.lib;opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
