@@ -19,20 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\FakeD\OpenGL\src\glad.c" />
+    <ClCompile Include="..\..\src\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\PhysicalEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\bigHW\include\camera.h" />
-    <ClInclude Include="..\..\bigHW\include\Game.hpp" />
-    <ClInclude Include="..\..\bigHW\include\GraphLine.hpp" />
-    <ClInclude Include="..\..\bigHW\include\manResource.hpp" />
-    <ClInclude Include="..\..\bigHW\include\map.hpp" />
-    <ClInclude Include="..\..\bigHW\include\mesh.hpp" />
-    <ClInclude Include="..\..\bigHW\include\model.hpp" />
-    <ClInclude Include="..\..\bigHW\include\shader.hpp" />
-    <ClInclude Include="..\..\bigHW\include\texture.hpp" />
     <ClInclude Include="..\..\src\stb_image.h" />
+    <ClInclude Include="include\camera.h" />
+    <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\GraphLine.hpp" />
+    <ClInclude Include="include\manResource.hpp" />
+    <ClInclude Include="include\map.hpp" />
+    <ClInclude Include="include\mesh.hpp" />
+    <ClInclude Include="include\model.hpp" />
+    <ClInclude Include="include\PhysicalEngine.h" />
+    <ClInclude Include="include\shader.hpp" />
+    <ClInclude Include="include\texture.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -87,8 +89,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\ComputerGraphics\include;$(IncludePath)</IncludePath>
-    <ReferencePath>E:\ComputerGraphics\lib;$(ReferencePath)</ReferencePath>
+    <IncludePath>D:\Code\C++\2023 Autumn\Computer Graphics\Projects\ComputerGraphics\include;$(IncludePath)</IncludePath>
+    <ReferencePath>D:\Code\C++\2023 Autumn\Computer Graphics\Projects\ComputerGraphics\lib;$(ReferencePath)</ReferencePath>
     <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -129,8 +131,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\ComputerGraphics\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Code\C++\2023 Autumn\Computer Graphics\Projects\ComputerGraphics\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>bullet_lib.lib;kernel32.lib;glfw3.lib;opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
