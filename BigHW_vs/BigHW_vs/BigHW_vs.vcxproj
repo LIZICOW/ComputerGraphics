@@ -23,16 +23,15 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\bigHW\include\camera.h" />
-    <ClInclude Include="..\..\bigHW\include\Game.hpp" />
-    <ClInclude Include="..\..\bigHW\include\GraphLine.hpp" />
-    <ClInclude Include="..\..\bigHW\include\manResource.hpp" />
-    <ClInclude Include="..\..\bigHW\include\map.hpp" />
-    <ClInclude Include="..\..\bigHW\include\mesh.hpp" />
-    <ClInclude Include="..\..\bigHW\include\model.hpp" />
-    <ClInclude Include="..\..\bigHW\include\shader.hpp" />
-    <ClInclude Include="..\..\bigHW\include\texture.hpp" />
-    <ClInclude Include="..\..\src\stb_image.h" />
+    <ClInclude Include="include\camera.h" />
+    <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\GraphLine.hpp" />
+    <ClInclude Include="include\manResource.hpp" />
+    <ClInclude Include="include\map.hpp" />
+    <ClInclude Include="include\mesh.hpp" />
+    <ClInclude Include="include\model.hpp" />
+    <ClInclude Include="include\shader.hpp" />
+    <ClInclude Include="include\texture.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

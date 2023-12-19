@@ -57,7 +57,9 @@ Game::~Game(){
     for(auto &x : Obstacle_q){
         delete x;
     }
-    for(auto& [name, model]:Mdl){
+    for (auto it = Mdl.begin(); it != Mdl.end(); it++) {
+        auto& name = it->first;
+        auto& model = it->second;
         delete model;
     }
 }
@@ -145,7 +147,9 @@ void Game::Update(){
             remove = true;
         }
     }
-    for(auto& [name, model]:Mdl){
+    for(auto it = Mdl.begin(); it != Mdl.end(); it++){
+        auto& name = it->first;
+        auto& model= it->second;
         if(name == "dragon"){
             if(jumpLock){
                 float v = jumpV - 4;
