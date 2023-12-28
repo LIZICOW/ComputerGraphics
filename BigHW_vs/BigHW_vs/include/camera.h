@@ -44,8 +44,9 @@ public:
     float Zoom;
 
     // constructor with vectors
-    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : 
-        Front(glm::vec3(0.0f, 0.0f, -1.0f)), 
+    Camera(glm::vec3 position = glm::vec3(-7.84339, 4.04422, 4.22379), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) :
+        Front(glm::vec3(0.892143, -0.204496, -0.402818)),
+        Up(glm::vec3(0.205343, 0.97437, -0.0918544)),
         MovementSpeed(SPEED), 
         MouseSensitivity(SENSITIVITY), 
         Zoom(ZOOM)
@@ -54,7 +55,6 @@ public:
         WorldUp = up;
         Yaw = yaw;
         Pitch = pitch;
-        updateCameraVectors();
     }
     // constructor with scalar values
     Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : 
@@ -67,7 +67,6 @@ public:
         WorldUp = glm::vec3(upX, upY, upZ);
         Yaw = yaw;
         Pitch = pitch;
-        updateCameraVectors();
     }
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -112,8 +111,6 @@ public:
                 Pitch = -89.0f;
         }
 
-        // update Front, Right and Up Vectors using the updated Euler angles
-        updateCameraVectors();
     }
 
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis

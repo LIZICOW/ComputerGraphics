@@ -6,7 +6,7 @@
 
 #include <learnopengl/camera.h>
 //#include <learnopengl/filesystem.h>
-#include <learnopengl/model.h>
+//#include <learnopengl/model.h>
 #include <learnopengl/shader_m.h>
 #include <stb_image.h>
 
@@ -107,8 +107,8 @@ void myBulletEngine::btInit()
 	broadphase = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver();
 	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-	world->getDispatchInfo().m_allowedCcdPenetration = 0.0001f;
-	world->setGravity(btVector3(0, -10, 0));
+	world->getDispatchInfo().m_allowedCcdPenetration = 0.0001f;	// 穿透系数
+	world->setGravity(btVector3(0, -15.8, 0));
 }
 
 void myBulletEngine::btExit()
@@ -120,91 +120,222 @@ void myBulletEngine::btExit()
 	delete broadphase;
 }
 
-void myBulletEngine::addGround() {
-	// 添加地面
-	btTransform t;
-	t.setIdentity();
-	t.setOrigin(btVector3(0, 0, 0));
-	btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
-	btMotionState* motion = new btDefaultMotionState(t);
-	btRigidBody::btRigidBodyConstructionInfo info(0.0, motion, plane);
-	btRigidBody* body = new btRigidBody(info);
-
-	body->getCollisionShape()->setUserIndex(bt_Ground);
-
-	body->setRestitution(btScalar(0.5));
-	world->addRigidBody(body);
-}
-
-void myBulletEngine::addDinosaur() {
-	// 添加小恐龙
-	btTransform t;
-	t.setIdentity();							// 将变换重置为单位变换
-	t.setOrigin(btVector3(100.f, 0.f, 0.f));	// 设置变换位置
-
-	// 创建一个带缓存的Ghost对象，用于表示一个“幽灵”对象，它可以在物理世界中移动但不受实际的物理力影响
-	m_ghostObject = new btPairCachingGhostObject();
-	m_ghostObject->setWorldTransform(t);  // 设置幽灵对象的世界变换为上面定义的变换
-
-	// 设置物理世界中的Ghost对象的配对缓存回调函数，这通常用于帮助优化碰撞检测
-	broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
-
-	// 定义角色的高度和宽度
-	btScalar characterHeight = 2.0f;
-	btScalar characterWidth = 2.0f;
-
-	// 创建一个胶囊形状，用于表示角色的碰撞形状
-	btConvexShape* capsule = new btCapsuleShape(characterWidth, characterHeight);
-	m_ghostObject->setCollisionShape(capsule);	// 将胶囊形状设置为幽灵对象的碰撞形状
-	m_ghostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);	// 设置ghost对象的碰撞标志为角色对象
-
-	// 定义角色的步行高度
-	btScalar stepHeight = btScalar(0.35);
-
-	// 创建一个动态角色控制器，它使用上述定义的幽灵对象和胶囊形状，并设置一个步行高度
-	m_character = new btKinematicCharacterController(m_ghostObject, capsule, stepHeight);
-
-	m_character->setGravity(btVector3(0, -10000 / 80, 0));  // 设置角色的重力向量
-
-	// 将幽灵对象添加到物理世界的碰撞对象列表中
-	world->addCollisionObject(
-		m_ghostObject,
-		btBroadphaseProxy::CharacterFilter,
-		btBroadphaseProxy::StaticFilter | btBroadphaseProxy::DefaultFilter
-	);
-
-	// 将动态角色控制器添加到物理世界的动作列表中，使其在物理模拟中生效
-	world->addAction(m_character);
-}
-
-btRigidBody* myBulletEngine::addSphere(float radius, float x, float y, float z, float mass)
+void myBulletEngine::addGround(btVector3 shape, btVector3 position)
 {
-	//初始化位姿信息
-	btTransform t;
-	t.setIdentity();
-	t.setOrigin(btVector3(x, y, z));
+	btCollisionShape* Shape = new btBoxShape(shape);
+	btTransform trans;
+	trans.setIdentity();
+	trans.setOrigin(position);
 
-	//生成形状
-	btSphereShape* sphere = new btSphereShape(radius);
-
-	btVector3 inertia(0, 0, 0);
-	//质量为零即静态物体
-	if (mass != 0.0) {
-		sphere->calculateLocalInertia(mass, inertia);
-	}
-	//为物体增添运动姿态信息
-	btMotionState* motion = new btDefaultMotionState(t);
-	btRigidBody::btRigidBodyConstructionInfo info(mass, motion, sphere);
-	btRigidBody* body = new btRigidBody(info);
-	//添加到世界中
-	body->setRestitution(btScalar(0.5));
-	world->addRigidBody(body);
-
-	body->getCollisionShape()->setUserIndex(bt_cacuts);
-
-
-
-	bodies.push_back(body);
-
-	return body;
+	btScalar mass = 0.f;
+	btVector3 localInertia(0., 0., 0.);
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(trans);
+	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, Shape, localInertia);
+	ground = new btRigidBody(cInfo);
+	ground->setRestitution(0);	// 反弹系数
+	world->addRigidBody(ground);
 }
+
+// 长方体表示dinosaur
+void myBulletEngine::addDinosaur(btVector3 cubeshape, btVector3 position)
+{
+	// 创建一个立方体，并加入到场景中
+	btCollisionShape* shape = new btBoxShape(cubeshape);
+	btTransform trans;
+	trans.setIdentity();
+	trans.setOrigin(position);  // 设置初始位置
+
+	btScalar mass = 2.f;
+	btVector3 localInertia(0, 0, 0);
+
+	// 计算局部惯性
+	shape->calculateLocalInertia(mass, localInertia);
+
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(trans); // 创建默认运动状态对象
+	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape, localInertia); // 创建刚体构造信息对象
+	btRigidBody* g_body = new btRigidBody(cInfo); // 创建刚体
+
+	g_body->setRestitution(0.5);	// 设置反弹系数，不想Q弹设置为0
+
+	dinosaur = g_body;
+	world->addRigidBody(g_body);
+}
+
+//// 加障碍物，均为长方体
+//void myBulletEngine::addBarrier(btVector3 cubeshape, btVector3 position, float mass, btVector3 speed) 
+//{
+//	// 创建一个立方体，并加入到场景中
+//	btCollisionShape* shape = new btBoxShape(cubeshape);
+//	btTransform trans;
+//	trans.setIdentity();
+//	trans.setOrigin(position);  // 设置球体的初始位置
+//
+//	btVector3 localInertia(0, 0, 0);
+//	bool isDynamic = (mass != 0.f);
+//
+//	// 如果是动态长方体，计算局部惯性
+//	if (isDynamic)
+//		shape->calculateLocalInertia(mass, localInertia);
+//
+//	btDefaultMotionState* myMotionState = new btDefaultMotionState(trans); // 创建默认运动状态对象
+//	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape, localInertia); // 创建刚体构造信息对象
+//	btRigidBody* g_body = new btRigidBody(cInfo); // 创建刚体
+//
+//	// 设置速度
+//	g_body->setLinearVelocity(speed);
+//
+//	Barrier* barrier = new Barrier(g_body);
+//	barriers.push_back(barrier);
+//	world->addRigidBody(g_body);
+//}
+//
+//// 加会飞障碍物，均为长方体
+//void myBulletEngine::addCloud(btVector3 cubeshape, btVector3 position, float mass, btVector3 speed)
+//{
+//	// 创建一个立方体，并加入到场景中
+//	btCollisionShape* shape = new btBoxShape(cubeshape);
+//	btTransform trans;
+//	trans.setIdentity();
+//	trans.setOrigin(position);  // 设置球体的初始位置
+//
+//	btVector3 localInertia(0, 0, 0);
+//	bool isDynamic = (mass != 0.f);
+//
+//	// 如果是动态长方体，计算局部惯性
+//	if (isDynamic)
+//		shape->calculateLocalInertia(mass, localInertia);
+//
+//	btDefaultMotionState* myMotionState = new btDefaultMotionState(trans); // 创建默认运动状态对象
+//	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape, localInertia); // 创建刚体构造信息对象
+//	btRigidBody* g_body = new btRigidBody(cInfo); // 创建刚体
+//
+//	// 设置速度
+//	g_body->setLinearVelocity(speed);
+//	// 设置重力为0
+//	g_body->setGravity(btVector3(0, 0, 0));
+//
+//	Barrier* cloud = new Barrier(g_body, true);
+//
+//	clouds.push_back(cloud);
+//	world->addRigidBody(g_body);
+//}
+void myBulletEngine::addBarrier(btVector3 cubeshape, btVector3 position, float mass, btVector3 speed, bool fly)
+{
+	// 创建一个立方体，并加入到场景中
+	btCollisionShape* shape = new btBoxShape(cubeshape);
+	btTransform trans;
+	trans.setIdentity();
+	trans.setOrigin(position);  // 设置球体的初始位置
+
+	btVector3 localInertia(0, 0, 0);
+	bool isDynamic = (mass != 0.f);
+
+	// 如果是动态长方体，计算局部惯性
+	if (isDynamic)
+		shape->calculateLocalInertia(mass, localInertia);
+
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(trans); // 创建默认运动状态对象
+	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape, localInertia); // 创建刚体构造信息对象
+	btRigidBody* g_body = new btRigidBody(cInfo); // 创建刚体
+
+	// 设置速度
+	g_body->setLinearVelocity(speed);
+
+	// 设置重力为0
+	g_body->setGravity(btVector3(0, 0, 0));
+	g_body->setRestitution(1);
+
+	Barrier* barrier = new Barrier(g_body, fly);
+
+	barriers.push_back(barrier);
+	world->addRigidBody(g_body);
+}
+
+void myBulletEngine::DinosaurJump(btVector3 force)
+{
+	btTransform trans;
+	dinosaur->getMotionState()->getWorldTransform(trans);
+	// 假设 trans 是一个 btTransform 类型的对象
+	btVector3 pos = trans.getOrigin();
+
+	std::cout << "dinosaur Position: x=" << pos.getX()
+		<< ", y=" << pos.getY()
+		<< ", z=" << pos.getZ() << std::endl;
+	for (auto& x : useBarriers) {
+		btTransform trans;
+		x->barrier->getMotionState()->getWorldTransform(trans);
+		// 假设 trans 是一个 btTransform 类型的对象
+		btVector3 pos = trans.getOrigin();
+
+		std::cout << "Position: x=" << pos.getX()
+			<< ", y=" << pos.getY()
+			<< ", z=" << pos.getZ() << std::endl;
+
+	}
+	std::cout << std::endl;
+
+	dinosaur->activate(true);
+	dinosaur->applyCentralImpulse(force);	// 施加冲量
+}
+
+void myBulletEngine::CloudsFly(float deltaTime, float amplitude, float frequency)
+{
+	static float time = 0.0f;
+	time += deltaTime;
+	for (auto& x : useBarriers) {
+		if (x->fly) {
+			btTransform trans;
+			x->barrier->getMotionState()->getWorldTransform(trans);
+			btVector3 pos = trans.getOrigin();
+			pos.setY(pos.y() + amplitude * sin(frequency * time));
+			trans.setOrigin(pos);
+			x->barrier->getMotionState()->setWorldTransform(trans);
+		}
+	}
+}
+
+// 渲染地面
+void myBulletEngine::renderGround(Shader& shader)
+{
+	btTransform trans = ground->getWorldTransform();
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+	shader.setMat4("model", model);
+}
+
+// 渲染恐龙
+void myBulletEngine::renderDinosaur(Shader& shader)
+{
+	btTransform trans = dinosaur->getWorldTransform();
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+	shader.setMat4("model", model);
+}
+
+glm::mat4 myBulletEngine::getDinosaurMode() {
+	btTransform trans = dinosaur->getWorldTransform();
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+	return model;
+}
+
+glm::mat4 myBulletEngine::getBarriersMode(int index)
+{
+	btTransform trans = useBarriers[index]->barrier->getWorldTransform();
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+	return model;
+}
+
+
+// 渲染障碍物（同时添加速度）
+void myBulletEngine::renderBarriers(Shader& shader)
+{
+	/*for (btRigidBody* body : barriers) {
+		btTransform trans = body->getWorldTransform();
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+		shader.setMat4("model", model);
+	}*/
+}
+

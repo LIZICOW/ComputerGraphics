@@ -8,11 +8,11 @@
 
 #include "../include/manResource.hpp"
 
-#define FLOOR_NUM 20
-#define WATER_NUM 20
+#define FLOOR_NUM 30
+#define WATER_NUM 30
 #define BACKGROUND_NUM_X 30
 #define BACKGROUND_NUM_Z 5
-#define VERTICAL_NUM 8
+#define VERTICAL_NUM 5
 
 enum TextureID{
     FLOOR1, FLOOR2, FLOOR3, FLOOR4,
@@ -31,6 +31,10 @@ static inline float randf(float min, float max, int precision = 1000)
     return ((float)(rand() % i) / (float)precision) + min;
 }
 
+float calDistance(glm::vec3 vec1, glm::vec3 vec2)
+{
+    return sqrt((vec1.x - vec2.x) * (vec1.x - vec2.x) + (vec1.y - vec2.y) * (vec1.y - vec2.y) + (vec1.z - vec2.z) * (vec1.z - vec2.z));
+}
 class Floor{
 public:
     GLuint VAO, VBO;    
@@ -79,7 +83,7 @@ public:
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
                                                 (float)WINDOW_W / (float)WINDOW_H,
-                                                0.1f, 50.0f);
+                                                0.1f, CAMERA_FAR);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, this->pos);
         model = glm::scale(model, this->scale);
@@ -92,15 +96,16 @@ public:
         ResourceManager::GetShader("map").setVec3("viewPos", camera.Position); 
         ResourceManager::GetShader("map").setFloat("Distance", calDistance(camera.Position, this->pos)); 
         ResourceManager::GetShader("map").setFloat("maxDistance", 50.0f); 
+        ResourceManager::GetShader("map").setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+        ResourceManager::GetShader("map").setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+        ResourceManager::GetShader("map").setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+        ResourceManager::GetShader("map").setFloat("material.shininess", 32.0f);
+                                   
+        ResourceManager::GetShader("map").setVec3("light.direction", -0.2f, -1.0f, -0.3f);
 
         ResourceManager::GetTexture(TextureName[texture]).Bind();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, points.size() / 3);
-    }
-
-    float calDistance(glm::vec3 vec1, glm::vec3 vec2)
-    {
-        return sqrt((vec1.x - vec2.x) * (vec1.x - vec2.x) + (vec1.y - vec2.y) * (vec1.y - vec2.y) + (vec1.z - vec2.z) * (vec1.z - vec2.z));
     }
 
     ~Floor(){
@@ -116,7 +121,7 @@ private:
     std::vector<GLfloat> points;
     std::vector<GLuint> indices;
     int waterWidth = 50;
-    int waterLength = 300;
+    int waterLength = 1000;
     unsigned int VBO, EBO, VAO;
     glm::vec3 pos;
     struct GerstnerWave
@@ -126,16 +131,17 @@ private:
         float w;
         float l;
         glm::vec2 D;
-    }waves[10];
+    }waves[20];
 public:
-    Water(){
-        pos = glm::vec3(0.0, -0.5, -5.0);
+    Water(glm::vec3 p = glm::vec3(0.0, -0.5, -5.0)){
+        pos = p;
     }
-    void init(){
+    void init(glm::vec3 p = glm::vec3(0.0, -0.5, -5.0)){
+        pos = p;
         for(int i = 0;i < waterLength; i++){
             for(int j = 0;j < waterWidth; j++){
-                points.push_back((i - waterWidth / 2.0) / 10.0); // x
-                points.push_back(0.0);                           // y
+                points.push_back((i - waterLength / 2.0) / 10.0); // x
+                points.push_back(0.2);                           // y
                 points.push_back((j - waterWidth / 2.0) / 10.0); // z
             }
         }
@@ -146,12 +152,12 @@ public:
         */
         for(int i = 0;i < waterLength - 1; i++){
             for(int j = 0;j < waterWidth - 1; j++){
-                indices.push_back(i * waterWidth + j); 
-                indices.push_back(i * waterWidth + j + 1);                           
-                indices.push_back((i + 1) * waterWidth + j + 1); 
-                indices.push_back(i * waterWidth + j); 
-                indices.push_back((i + 1) * waterWidth + j);                           
-                indices.push_back((i + 1) * waterWidth + j + 1); 
+                indices.push_back(i * waterLength + j);
+                indices.push_back(i * waterLength + j + 1);
+                indices.push_back((i + 1) * waterLength + j + 1);
+                indices.push_back(i * waterLength + j);
+                indices.push_back((i + 1) * waterLength + j);
+                indices.push_back((i + 1) * waterLength + j + 1);
             }
         }
         glGenVertexArrays(1, &VAO);
@@ -166,7 +172,7 @@ public:
         glEnableVertexAttribArray(0);
 
         srand((unsigned int)time(nullptr));
-        int r = rand() % 100, waveCnt = 10;
+        int r = 180, waveCnt = 20;
         glm::vec2 windDir = glm::vec2(cosf(r), sinf(r));
         ResourceManager::GetShader("water").use();
         ResourceManager::GetShader("water").setInt("waveCnt", waveCnt);
@@ -179,8 +185,8 @@ public:
             // but have a random angle to the wind direction
             float windAngle = acosf((windDir.x/sqrtf(windDir.x*windDir.x + windDir.y*windDir.y)));
             if (windDir.y < 0) windAngle = -windAngle;
-            float waveAngle = randf(windAngle - glm::radians(60.0f),
-                                    windAngle + glm::radians(60.0f));
+            float waveAngle = randf(windAngle - glm::radians(30.0f),
+                                    windAngle + glm::radians(30.0f));
             waves[i].D.x = cos(waveAngle);
             waves[i].D.y = sin(waveAngle);
             ResourceManager::GetShader("water").setVec2("wave[" + std::to_string(i) + "].D", waves[i].D);
@@ -188,16 +194,20 @@ public:
             waves[i].w = randf(2.5f, 3.0f);
             ResourceManager::GetShader("water").setFloat("wave[" + std::to_string(i) + "].w", waves[i].w);
 
-            waves[i].l = randf(1.0f, 3.0f);
+            waves[i].l = randf(0.5f, 1.5f);
             ResourceManager::GetShader("water").setFloat("wave[" + std::to_string(i) + "].l", waves[i].l);
         }
+    }
+
+    void modifyPos(GLfloat offset) {
+        pos.x += offset;
     }
 
     void render(){
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
                                                 (float)WINDOW_W / (float)WINDOW_H,
-                                                0.1f, 50.0f);
+                                                0.1f, CAMERA_FAR);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, this->pos);
 
@@ -209,9 +219,18 @@ public:
         ResourceManager::GetShader("water").setVec3("deepWaterColor", glm::vec3(0.1137f, 0.2745f, 0.4392f));
         ResourceManager::GetShader("water").setVec3("shallowWaterColor", glm::vec3(0.45f, 0.55f, 0.7f));
         ResourceManager::GetShader("water").setVec3("viewPos", camera.Position);
-        ResourceManager::GetShader("water").setVec3("lightDir", glm::vec3(10.0f, 1.0f, -12.0f));
+        ResourceManager::GetShader("water").setVec3("lightDir", glm::vec3(-10.0f, -1.0f, 12.0f));
+        ResourceManager::GetShader("water").setFloat("maxDistance", 50.0f);
+        ResourceManager::GetTexture(TextureName[WATER]).Bind();
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, indices.size() , GL_UNSIGNED_INT, nullptr);
+    }
+
+    glm::vec3 getPos() {
+        return pos;
+    }
+    float getWaterLength() {
+        return waterLength / 10.0;
     }
 };
 
@@ -219,7 +238,7 @@ class Map
 {
 protected:
     std::vector<Floor*> floor;
-    Water water;
+    Water water[2];
     std::vector<std::vector<Floor*>> background, verticleFloor;
     GLfloat centerX, centerY, centerZ;
 
@@ -241,7 +260,7 @@ Map::Map(/* args */)
     ResourceManager::LoadTexture("../resources/textures/floor2.png", false, "floor2");
     ResourceManager::LoadTexture("../resources/textures/floor3.png", false, "floor3");
     ResourceManager::LoadTexture("../resources/textures/floor4.png", false, "floor4");
-    ResourceManager::LoadTexture("../resources/textures/blue.png", false, "water");
+    ResourceManager::LoadTexture("../resources/textures/R.png", false, "water");
     ResourceManager::LoadTexture("../resources/textures/yellow.png", true, "background1");
     ResourceManager::LoadTexture("../resources/textures/orange.png", true, "background2");
     ResourceManager::LoadTexture("../resources/textures/verti.png", true, "vertical");
@@ -258,22 +277,14 @@ void Map::init(){
         floor[i]->init();
     }
 
-    // pos.clear();
-    // for(int i = -WATER_NUM;i < WATER_NUM;i++){
-    //     pos.push_back(i * 5);
-    // }
-
-    // for(int i = 0;i < WATER_NUM * 2;i++){
-    //     water.push_back(new Floor(WATER, glm::vec3(pos[i], -0.5, -5.0)));
-    //     water[i]->init();
-    // }  
-    water.init();
+    water[0].init();
+    water[1].init(glm::vec3(water[1].getWaterLength() - 5, -0.5, -5.0));
 
 
     for(int j = 0;j<VERTICAL_NUM;j++){
         std::vector<Floor*> v;
         for (int i = 0; i < WATER_NUM * 2; i++){
-            v.push_back(new Floor(VERTICAL, glm::vec3(pos[i], -0.25, -5 * j + 2.5), glm::vec3(1.0f, 0.1f, 1.0f)));
+            v.push_back(new Floor(VERTICAL, glm::vec3(pos[i], -0.25 + 0.4 * (j > 2 ? j - 2 : 0), -5 * j + 2.5), glm::vec3(1.0f, 0.1f, 1.0f)));
             v[i]->setRotate(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
             v[i]->init();
         }
@@ -283,7 +294,7 @@ void Map::init(){
         std::vector<Floor*> back;
         for (int j = -FLOOR_NUM; j < BACKGROUND_NUM_X; j++){
             int type = (i%2) ? BACKGROUND1 : BACKGROUND2;
-            back.push_back(new Floor(type, glm::vec3(j * 5, -0.1 * (i % 2), -(i + 2) * 5)));
+            back.push_back(new Floor(type, glm::vec3(j * 5, 0.4 * (i < 2 ? i : 2), -(i + 2) * 5)));
         }
         background.push_back(back);
     }
@@ -305,15 +316,11 @@ void Map::update(float delta){
         floor[floor.size() - 1]->init();
     }
 
-    // for(int i = 0;i < water.size();i++){
-    //     water[i]->pos.x -= delta;
-    // }
-    // if (water[0]->pos.x < -WATER_NUM * 5 - 2.5){
-    //     water.erase(water.begin());
-    //     water.push_back(new Floor(WATER, glm::vec3(water[water.size() - 1]->pos.x + 5, -0.5, -5.0)));
-    //     water[water.size() - 1]->init();
-    // }
-
+    for (auto& w : water) {
+        w.modifyPos(-0.1);
+        if (w.getPos().x < -w.getWaterLength() - 5)
+            w.modifyPos(w.getWaterLength() * 2 - 10);
+    }
     for(int j = 0;j < verticleFloor.size();j++){
         for(int i = 0;i < verticleFloor[j].size();i++){
             verticleFloor[j][i]->pos.x -= delta;
@@ -321,7 +328,7 @@ void Map::update(float delta){
         if (verticleFloor[j][0]->pos.x < -WATER_NUM * 5 - 2.5){
             verticleFloor[j].erase(verticleFloor[j].begin());
             verticleFloor[j].push_back(new Floor(VERTICAL, 
-                glm::vec3(verticleFloor[j][verticleFloor[j].size() - 1]->pos.x + 5, -0.25, -5 * j + 2.5),
+                glm::vec3(verticleFloor[j][verticleFloor[j].size() - 1]->pos.x + 5, -0.25 + 0.4 * (j > 2 ? j - 2 : 0), -5 * j + 2.5),
                 glm::vec3(1.0f, 0.1f, 1.0f)));
             verticleFloor[j][verticleFloor[j].size() - 1]->setRotate(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
             verticleFloor[j][verticleFloor[j].size() - 1]->init();
@@ -335,7 +342,7 @@ void Map::update(float delta){
             background[i].erase(background[i].begin());
             int type = (i % 2) ? BACKGROUND1 : BACKGROUND2;
             background[i].push_back(new Floor(type, 
-                glm::vec3(background[i][background[i].size() - 1]->pos.x + 5, -0.1 * (i % 2), -(i + 2) * 5)));
+                glm::vec3(background[i][background[i].size() - 1]->pos.x + 5, 0.4 * (i < 2 ? i : 2), -(i + 2) * 5)));
             background[i][background[i].size() - 1]->init();
         }
     }
@@ -345,10 +352,9 @@ void Map::render(){
     for (auto& x:floor){
         x->render();
     }
-    // for (auto &x : water){
-    //     x->render();
-    // }
-    water.render();
+
+    water[0].render();
+    water[1].render();
     for(int i = 0;i < verticleFloor.size();i++){
         for(int j=0;j<verticleFloor[i].size();j++){
             verticleFloor[i][j]->render();

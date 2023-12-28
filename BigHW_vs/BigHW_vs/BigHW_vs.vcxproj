@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\PhysicalEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\stb_image.h" />
@@ -31,9 +32,27 @@
     <ClInclude Include="include\map.hpp" />
     <ClInclude Include="include\mesh.hpp" />
     <ClInclude Include="include\model.hpp" />
+    <ClInclude Include="include\Particle.hpp" />
     <ClInclude Include="include\PhysicalEngine.h" />
     <ClInclude Include="include\shader.hpp" />
+    <ClInclude Include="include\TextRenderer.hpp" />
     <ClInclude Include="include\texture.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shader\dragonShader.fs" />
+    <None Include="..\shader\dragonShader.vs" />
+    <None Include="..\shader\mapShader.fs" />
+    <None Include="..\shader\mapShader.vs" />
+    <None Include="..\shader\particleShader.fs" />
+    <None Include="..\shader\particleShader.vs" />
+    <None Include="..\shader\shader.fs" />
+    <None Include="..\shader\shader.vs" />
+    <None Include="..\shader\skyboxShader.fs" />
+    <None Include="..\shader\skyboxShader.vs" />
+    <None Include="..\shader\textShader.fs" />
+    <None Include="..\shader\textShader.vs" />
+    <None Include="..\shader\waterShader.fs" />
+    <None Include="..\shader\waterShader.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -131,7 +150,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>E:\ComputerGraphics\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>bullet_lib.lib;kernel32.lib;glfw3.lib;opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>bullet_lib.lib;kernel32.lib;glfw3.lib;opengl32.lib;assimp-vc140-mt.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

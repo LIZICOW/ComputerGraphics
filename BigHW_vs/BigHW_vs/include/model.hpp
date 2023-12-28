@@ -14,6 +14,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <glm/gtx/string_cast.hpp>
 extern Camera camera;
 unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false);
 
@@ -31,6 +32,7 @@ public:
 public:
     Model(std::string n, glm::vec3 p, glm::vec3 s, glm::vec3 col);
     Model();
+    Model(Model* m);
     void init(glm::vec3 p, glm::vec3 s);
     void setID(int id){
         ID = id;
@@ -38,6 +40,7 @@ public:
     void loadModel();
     void processNode(aiNode *node, const aiScene *scene);
     std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
+    void render(glm::mat4 model);
     void render();
     void update(float deltaTime);
     void setScale(glm::vec3 scale);
@@ -46,7 +49,17 @@ public:
     ~Model();
 };
 
-
+Model::Model(Model* m)
+{
+    VAO = m->VAO;
+    VBO = m->VBO;
+    name = m->name;
+    textures_loaded = m->textures_loaded;
+    meshes = m->meshes;
+    pos = m->pos;
+    scale = m->scale;
+    points = m->points;
+}
 
 Model::Model()
 {
@@ -97,24 +110,74 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     }
 }
 
-void Model::render()
+void Model::render(glm::mat4 model)
 {
     glm::mat4 view = camera.GetViewMatrix();
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
                                             (float)WINDOW_W / (float)WINDOW_H,
-                                            0.1f, 1000.0f);
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, this->pos);
+                                            0.1f, CAMERA_FAR);
+    //std::cout << glm::to_string(model) << std::endl;
+    if (name == "xianren")
+        model = glm::translate(model, glm::vec3(0.0f, -0.65f, 0.0f)); 
+    if (name == "dragon") {
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    }
+    if (name == "dino3" || name == "dino2" || name == "dino1" || name == "dino-lay" || name == "dino-jump") {
+        model = glm::translate(model, glm::vec3(0.0f, 0.07, 0.0f));
+    }
     model = glm::scale(model, this->scale);
     // dragon 待替换
     ResourceManager::GetShader("dragon").use();
     ResourceManager::GetShader("dragon").setMat4("view", view);
     ResourceManager::GetShader("dragon").setMat4("projection", projection);
     ResourceManager::GetShader("dragon").setMat4("model", model);
+
+    ResourceManager::GetShader("dragon").setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+    ResourceManager::GetShader("dragon").setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+    ResourceManager::GetShader("dragon").setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+    ResourceManager::GetShader("dragon").setFloat("material.shininess", 32.0f);
+    ResourceManager::GetShader("dragon").setFloat("maxDistance", 50.0f);
+
+    ResourceManager::GetShader("dragon").setVec3("light.direction", -0.2f, -1.0f, -0.3f);
+    ResourceManager::GetShader("dragon").setVec3("viewPos", camera.Position);
     // glBindVertexArray(VAO);
     // glDrawArrays(GL_TRIANGLES, 0, points.size() / 3);
 
     for(unsigned int i = 0; i < meshes.size(); i++)
+        meshes[i].Draw("dragon");
+    // std::cout<<points.size()<<'\n';
+}
+
+void Model::render()
+{
+    glm::mat4 view = camera.GetViewMatrix();
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
+        (float)WINDOW_W / (float)WINDOW_H,
+        0.1f, CAMERA_FAR);
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, this->pos);
+    model = glm::scale(model, this->scale);
+    if (name == "dragon") {
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    }
+    // dragon 待替换
+    ResourceManager::GetShader("dragon").use();
+    ResourceManager::GetShader("dragon").setMat4("view", view);
+    ResourceManager::GetShader("dragon").setMat4("projection", projection);
+    ResourceManager::GetShader("dragon").setMat4("model", model);
+
+    ResourceManager::GetShader("dragon").setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+    ResourceManager::GetShader("dragon").setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+    ResourceManager::GetShader("dragon").setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+    ResourceManager::GetShader("dragon").setFloat("material.shininess", 32.0f);
+    ResourceManager::GetShader("dragon").setFloat("maxDistance", 50.0f);
+
+    ResourceManager::GetShader("dragon").setVec3("light.direction", -0.2f, -1.0f, -0.3f);
+    ResourceManager::GetShader("dragon").setVec3("viewPos", camera.Position);
+    // glBindVertexArray(VAO);
+    // glDrawArrays(GL_TRIANGLES, 0, points.size() / 3);
+
+    for (unsigned int i = 0; i < meshes.size(); i++)
         meshes[i].Draw("dragon");
     // std::cout<<points.size()<<'\n';
 }

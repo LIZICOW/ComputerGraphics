@@ -9,6 +9,12 @@ uniform vec3 lightDir;
 in vec3 FragPos;
 in vec3 normal;
 uniform samplerCube skybox;
+uniform sampler2D tesst;
+uniform float maxDistance;
+
+float dis(vec3 x, vec3 y){
+    return sqrt((x.x - y.x) * (x.x - y.x) + (x.y - y.y) * (x.y - y.y) + (x.z - y.z) * (x.z - y.z));
+}
 
 void main(){
     vec3 n = normalize(normal);
@@ -33,11 +39,18 @@ void main(){
     }
 
     // Reflection color component
-    vec4 r = texture(skybox, reflectVec);
+    vec4 r = texture(tesst, vec2(reflectVec));
 
     // Transmission color component
     vec4 t = vec4(deepWaterColor, 1.0);
 
     // Calculate Fresnel Reflection and Refraction
-    FragColor = reflectivity * r + (1 - reflectivity) * t;
+    vec3 result = vec3(reflectivity * r + (1 - reflectivity) * t);
+
+    float fogFactor = (maxDistance - dis(viewPos, vec3(FragPos))/2) / (maxDistance - 0);
+    vec3 fogColor = vec3(0.94f, 0.70f, 0.16f); // Set fog color (adjust as needed)
+    vec3 finalColor = mix(fogColor, result, fogFactor);
+
+    FragColor = vec4(finalColor, 1.0f);
+
 }

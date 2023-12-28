@@ -17,7 +17,7 @@ uniform float time;
 out vec3 FragPos;
 out vec3 normal;
 
-uniform Wave wave[10];
+uniform Wave wave[20];
 void main()
 {
     vec3 pos = aPos;

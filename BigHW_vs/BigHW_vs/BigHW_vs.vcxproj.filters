@@ -21,6 +21,9 @@
     <ClCompile Include="..\..\src\glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\PhysicalEngine.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\camera.h">
@@ -56,5 +59,55 @@
     <ClInclude Include="include\PhysicalEngine.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\Particle.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TextRenderer.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shader\dragonShader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\dragonShader.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\mapShader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\mapShader.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\shader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\shader.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\skyboxShader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\skyboxShader.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\waterShader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\waterShader.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\particleShader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\particleShader.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\textShader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\shader\textShader.vs">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

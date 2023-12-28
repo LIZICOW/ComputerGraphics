@@ -1,1 +1,54 @@
-﻿  BigHW_vs.vcxproj -> E:\ComputerGraphics\BigHW_vs\x64\Debug\BigHW_vs.exe
+﻿  main.cpp
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\GraphLine.hpp(58,1): warning C4267: “=”: 从“size_t”转换到“GLuint”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\model.hpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(143,58): warning C4244: “参数”: 从“double”转换到“_Ty”，可能丢失数据
+          with
+          [
+              _Ty=GLfloat
+          ]
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(144,1): warning C4305: “参数”: 从“double”到“_Ty”截断
+          with
+          [
+              _Ty=GLfloat
+          ]
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(145,57): warning C4244: “参数”: 从“double”转换到“_Ty”，可能丢失数据
+          with
+          [
+              _Ty=GLfloat
+          ]
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(176,44): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(176,53): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(226,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(233,28): warning C4244: “return”: 从“double”转换到“float”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(272,25): warning C4244: “参数”: 从“int”转换到“_Ty”，可能丢失数据
+          with
+          [
+              _Ty=GLfloat
+          ]
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(320,25): warning C4305: “参数”: 从“double”到“GLfloat”截断
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(20,19): warning C4244: “初始化”: 从“double”转换到“GLfloat”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(21,19): warning C4244: “初始化”: 从“double”转换到“GLfloat”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(22,19): warning C4244: “初始化”: 从“double”转换到“GLfloat”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(23,43): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(28,43): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(87,29): warning C4244: “-=”: 从“double”转换到“T”，可能丢失数据
+          with
+          [
+              T=float
+          ]
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(215,15): warning C4244: “初始化”: 从“double”转换到“GLfloat”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(216,20): warning C4244: “初始化”: 从“double”转换到“GLfloat”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Game.hpp(51,17): warning C4305: “初始化”: 从“double”到“const float”截断
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Game.hpp(212,32): warning C4305: “=”: 从“double”到“T”截断
+          with
+          [
+              T=float
+          ]
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Game.hpp(216,32): warning C4305: “=”: 从“double”到“T”截断
+          with
+          [
+              T=float
+          ]
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\main.cpp(181,23): warning C4305: “参数”: 从“double”到“float”截断
+  BigHW_vs.vcxproj -> E:\ComputerGraphics\BigHW_vs\x64\Debug\BigHW_vs.exe

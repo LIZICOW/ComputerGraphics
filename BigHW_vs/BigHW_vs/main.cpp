@@ -8,6 +8,7 @@
 
 #define WINDOW_H 900
 #define WINDOW_W 1200
+#define CAMERA_FAR 100.0f
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -22,7 +23,6 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadCubemap(std::vector<std::string> faces);
 
@@ -33,7 +33,7 @@ bool firstMouse = true;
 float lastX = WINDOW_W / 2.0f;
 float lastY = WINDOW_H / 2.0f;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 1.0f));
+Camera camera;
 
 Game game(WINDOW_W, WINDOW_H);
 
@@ -70,12 +70,13 @@ int main()
     glfwMakeContextCurrent(window);
     // glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
 
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
     glEnable(GL_DEPTH_TEST);
+    glfwWindowHint(GLFW_SAMPLES, 4); 
+    glEnable(GL_MULTISAMPLE);
 
     ResourceManager::LoadShader("../shader/skyboxShader.vs", "../shader/skyboxShader.fs", nullptr, "skybox");
     float skyboxPoints[] = {
@@ -133,12 +134,18 @@ int main()
 
     std::vector<std::string> faces
     {
-        "../resources/TropicalSunnyDay/TropicalSunnyDayLeft2048.png",
-        "../resources/TropicalSunnyDay/TropicalSunnyDayRight2048.png",
-        "../resources/TropicalSunnyDay/TropicalSunnyDayUp2048.png",
-        "../resources/TropicalSunnyDay/TropicalSunnyDayDown2048.png",
-        "../resources/TropicalSunnyDay/TropicalSunnyDayFront2048.png",
-        "../resources/TropicalSunnyDay/TropicalSunnyDayBack2048.png",
+        //"../resources/TropicalSunnyDay/TropicalSunnyDayLeft2048.png",
+        //"../resources/TropicalSunnyDay/TropicalSunnyDayRight2048.png",
+        //"../resources/TropicalSunnyDay/TropicalSunnyDayUp2048.png",
+        //"../resources/TropicalSunnyDay/TropicalSunnyDayDown2048.png",
+        //"../resources/TropicalSunnyDay/TropicalSunnyDayFront2048.png",
+        //"../resources/TropicalSunnyDay/TropicalSunnyDayBack2048.png",
+        "../resources/skybox/left.png",
+        "../resources/skybox/right.png",
+        "../resources/skybox/top.png",
+        "../resources/skybox/bottom.png",
+        "../resources/skybox/front.png",
+        "../resources/skybox/back.png",
     };
     unsigned int cubemapTexture = loadCubemap(faces);
     ResourceManager::GetShader("skybox").setInt("skybox", 0);
@@ -153,7 +160,7 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         cnt++;
-        if (cnt == 10)
+        if (cnt == 6)
             cnt = 0;
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
@@ -169,17 +176,20 @@ int main()
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
             (float)WINDOW_W / (float)WINDOW_H,
-            0.1f, 100.0f);
+            0.1f, CAMERA_FAR);
         glm::mat4 model = glm::mat4(1.0f);
         map.update(0.1);
-        if (cnt == 5) {
-            game.Mdl["dragon"]->scale *= glm::vec3(1.0f, 1.0f, -1.0f);
+        if (cnt == 0){
+            game.dragon1->scale *= glm::vec3(1.0f, 1.0f, -1.0f);
+            game.dragon2->scale *= glm::vec3(1.0f, 1.0f, -1.0f);
+            game.dragon3->scale *= glm::vec3(1.0f, 1.0f, -1.0f);
+            game.dragon_lay->scale *= glm::vec3(1.0f, 1.0f, -1.0f);
+            posStart.z *= -1;
         }
         map.render();
 
         // ResourceManager::GetTexture("green").Bind();  
-        game.Update();
-
+        game.Update(cnt);
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
         ResourceManager::GetShader("skybox").use();
         view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
@@ -211,18 +221,18 @@ void processInput(GLFWwindow* window)
     static bool check_ctrl_pressed = false;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-        camera.ProcessKeyboard(UP, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        camera.ProcessKeyboard(DOWN, deltaTime);
+    //if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    //    camera.ProcessKeyboard(FORWARD, deltaTime);
+    //if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    //    camera.ProcessKeyboard(BACKWARD, deltaTime);
+    //if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    //    camera.ProcessKeyboard(LEFT, deltaTime);
+    //if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    //    camera.ProcessKeyboard(RIGHT, deltaTime);
+    //if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+    //    camera.ProcessKeyboard(UP, deltaTime);
+    //if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+    //    camera.ProcessKeyboard(DOWN, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
         game.jump();
     if (!game.jumpLock) {

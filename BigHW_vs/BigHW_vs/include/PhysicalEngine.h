@@ -1,33 +1,45 @@
-#pragma once
+ï»¿#pragma once
 #include <vector>
 #include <time.h>
 #include <btBulletDynamicsCommon.h>
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
-#include <learnopengl/camera.h>
-//#include <learnopengl/filesystem.h>
-#include <learnopengl/model.h>
-#include <learnopengl/shader_m.h>
-#include <stb_image.h>
-
-#include <iostream>
-
-//ÉùÒô£¬ÔÝÎ´ÊµÏÖ
-//#include <irrKlang.h>
-//extern irrklang::ISoundEngine* engine;
-
-#include <stdio.h>
-#include <btBulletDynamicsCommon.h>
-
-#include "../include/PhysicalEngine.h"
+class Barrier {
+public:
+	int id;
+	bool fly;
+	btRigidBody* barrier;
+	Barrier(btRigidBody* body = NULL, bool f = false) {
+		id = -1;
+		fly = f;
+		barrier = body;
+	}
+	void setID(int index) {
+		id = index;
+	}
+	void setPosition(btVector3 position) {
+		if (barrier) {
+			btTransform trans;
+			barrier->getMotionState()->getWorldTransform(trans); // Get the current transform
+			trans.setOrigin(position); // Set the new position
+			barrier->getMotionState()->setWorldTransform(trans); // Apply the new transform
+		}
+	}
+	void setyz0() {
+		if (barrier) {
+			btTransform trans;
+			barrier->getMotionState()->getWorldTransform(trans); // Get the current transform
+			btVector3 pos = trans.getOrigin();
+			trans.setOrigin(btVector3(pos.getX(), 0.f, 0.f));
+			barrier->getMotionState()->setWorldTransform(trans); // Apply the new transform
+		}
+	}
+};
 
 class myBulletEngine {
 public:
-	// bullet ³õÊ¼»¯
+	// bullet ï¿½ï¿½Ê¼ï¿½ï¿½
 	btDynamicsWorld* world;
 	btDispatcher* dispatcher;
 	btCollisionConfiguration* collisionConfiguration;
@@ -36,210 +48,33 @@ public:
 
 	btRigidBody* ground = NULL;
 	btRigidBody* dinosaur = NULL;
-	std::vector<btRigidBody*> bodies;
-	std::vector<btRigidBody*> barriers;
+	std::vector<Barrier*> barriers;	  // ï¿½ï¿½ï¿½Ðµï¿½ï¿½Ï°ï¿½ï¿½ï¿½
+	//std::vector<Barrier*> clouds;	  // ï¿½ï¿½Éµï¿½ï¿½Ï°ï¿½ï¿½ï¿½
+	std::vector<Barrier*> useBarriers;	// ï¿½ï¿½ï¿½Öµï¿½ï¿½Ï°ï¿½ï¿½ï¿½
 
-	// ¿ØÖÆ½ÇÉ«Àà
-	btKinematicCharacterController* m_character;
-	btPairCachingGhostObject* m_ghostObject;
 
+
+	/********************************************************/
 	myBulletEngine();
 	~myBulletEngine();
 
 	void btInit();
 	void btExit();
 
-	void addGround();
-	void addDinosaur();
-	btRigidBody* addSphere(float radius, float x, float y, float z, float mass);
+	void addGround(btVector3 shape, btVector3 position);
+	void addDinosaur(btVector3 cubeshape, btVector3 position);
+	//void addBarrier(btVector3 cubeshape, btVector3 position, float mass, btVector3 speed);
+	//void addCloud(btVector3 cubeshape, btVector3 position, float mass, btVector3 speed);
+	void addBarrier(btVector3 cubeshape, btVector3 position, float mass, btVector3 speed, bool fly);
 
+	void DinosaurJump(btVector3 force);
+	void CloudsFly(float deltaTime, float amplitude, float frequency);
+
+	void renderGround(Shader& shader);
+	void renderDinosaur(Shader& shader);
+	void renderBarriers(Shader& shader);
+
+	glm::mat4 getDinosaurMode();
+	glm::mat4 getBarriersMode(int index);
 
 };
-
-
-enum ObjIndex {
-	bt_dinosaur,
-	bt_birds,
-	bt_cacuts,
-	bt_Ground
-};
-
-// Cube¶¨µãÊý¾Ý
-float cube_vertices[] = {
-	// positions          // normals           // texture coords
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
-};
-
-void cubeInit(unsigned int& cubeVAO, unsigned int& cubeVBO)
-{
-	int stride = (3 + 3 + 2);
-
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), &cube_vertices, GL_STATIC_DRAW);
-
-	glBindVertexArray(cubeVAO);
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-}
-
-myBulletEngine::myBulletEngine() {};
-
-myBulletEngine::~myBulletEngine() {};
-
-void myBulletEngine::btInit()
-{
-	// ÎïÀíÒýÇæ³õÊ¼»¯
-	collisionConfiguration = new btDefaultCollisionConfiguration();
-	dispatcher = new btCollisionDispatcher(collisionConfiguration);
-	broadphase = new btDbvtBroadphase();
-	solver = new btSequentialImpulseConstraintSolver();
-	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-	world->getDispatchInfo().m_allowedCcdPenetration = 0.0001f;
-	world->setGravity(btVector3(0, -10, 0));
-}
-
-void myBulletEngine::btExit()
-{
-	delete dispatcher;
-	delete collisionConfiguration;
-	delete solver;
-	delete world;
-	delete broadphase;
-}
-
-void myBulletEngine::addGround() {
-	// Ìí¼ÓµØÃæ
-	btTransform t;
-	t.setIdentity();
-	t.setOrigin(btVector3(0, 0, 0));
-	btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
-	btMotionState* motion = new btDefaultMotionState(t);
-	btRigidBody::btRigidBodyConstructionInfo info(0.0, motion, plane);
-	btRigidBody* body = new btRigidBody(info);
-
-	body->getCollisionShape()->setUserIndex(bt_Ground);
-
-	body->setRestitution(btScalar(0.5));
-	world->addRigidBody(body);
-}
-
-void myBulletEngine::addDinosaur() {
-	// Ìí¼ÓÐ¡¿ÖÁú
-	btTransform t;
-	t.setIdentity();							// ½«±ä»»ÖØÖÃÎªµ¥Î»±ä»»
-	t.setOrigin(btVector3(100.f, 0.f, 0.f));	// ÉèÖÃ±ä»»Î»ÖÃ
-
-	// ´´½¨Ò»¸ö´ø»º´æµÄGhost¶ÔÏó£¬ÓÃÓÚ±íÊ¾Ò»¸ö¡°ÓÄÁé¡±¶ÔÏó£¬Ëü¿ÉÒÔÔÚÎïÀíÊÀ½çÖÐÒÆ¶¯µ«²»ÊÜÊµ¼ÊµÄÎïÀíÁ¦Ó°Ïì
-	m_ghostObject = new btPairCachingGhostObject();
-	m_ghostObject->setWorldTransform(t);  // ÉèÖÃÓÄÁé¶ÔÏóµÄÊÀ½ç±ä»»ÎªÉÏÃæ¶¨ÒåµÄ±ä»»
-
-	// ÉèÖÃÎïÀíÊÀ½çÖÐµÄGhost¶ÔÏóµÄÅä¶Ô»º´æ»Øµ÷º¯Êý£¬ÕâÍ¨³£ÓÃÓÚ°ïÖúÓÅ»¯Åö×²¼ì²â
-	broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
-
-	// ¶¨Òå½ÇÉ«µÄ¸ß¶ÈºÍ¿í¶È
-	btScalar characterHeight = 2.0f;
-	btScalar characterWidth = 2.0f;
-
-	// ´´½¨Ò»¸ö½ºÄÒÐÎ×´£¬ÓÃÓÚ±íÊ¾½ÇÉ«µÄÅö×²ÐÎ×´
-	btConvexShape* capsule = new btCapsuleShape(characterWidth, characterHeight);
-	m_ghostObject->setCollisionShape(capsule);	// ½«½ºÄÒÐÎ×´ÉèÖÃÎªÓÄÁé¶ÔÏóµÄÅö×²ÐÎ×´
-	m_ghostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);	// ÉèÖÃghost¶ÔÏóµÄÅö×²±êÖ¾Îª½ÇÉ«¶ÔÏó
-
-	// ¶¨Òå½ÇÉ«µÄ²½ÐÐ¸ß¶È
-	btScalar stepHeight = btScalar(0.35);
-
-	// ´´½¨Ò»¸ö¶¯Ì¬½ÇÉ«¿ØÖÆÆ÷£¬ËüÊ¹ÓÃÉÏÊö¶¨ÒåµÄÓÄÁé¶ÔÏóºÍ½ºÄÒÐÎ×´£¬²¢ÉèÖÃÒ»¸ö²½ÐÐ¸ß¶È
-	m_character = new btKinematicCharacterController(m_ghostObject, capsule, stepHeight);
-
-	m_character->setGravity(btVector3(0, -10000 / 80, 0));  // ÉèÖÃ½ÇÉ«µÄÖØÁ¦ÏòÁ¿
-
-	// ½«ÓÄÁé¶ÔÏóÌí¼Óµ½ÎïÀíÊÀ½çµÄÅö×²¶ÔÏóÁÐ±íÖÐ
-	world->addCollisionObject(
-		m_ghostObject,
-		btBroadphaseProxy::CharacterFilter,
-		btBroadphaseProxy::StaticFilter | btBroadphaseProxy::DefaultFilter
-	);
-
-	// ½«¶¯Ì¬½ÇÉ«¿ØÖÆÆ÷Ìí¼Óµ½ÎïÀíÊÀ½çµÄ¶¯×÷ÁÐ±íÖÐ£¬Ê¹ÆäÔÚÎïÀíÄ£ÄâÖÐÉúÐ§
-	world->addAction(m_character);
-}
-
-btRigidBody* myBulletEngine::addSphere(float radius, float x, float y, float z, float mass)
-{
-	//³õÊ¼»¯Î»×ËÐÅÏ¢
-	btTransform t;
-	t.setIdentity();
-	t.setOrigin(btVector3(x, y, z));
-
-	//Éú³ÉÐÎ×´
-	btSphereShape* sphere = new btSphereShape(radius);
-
-	btVector3 inertia(0, 0, 0);
-	//ÖÊÁ¿ÎªÁã¼´¾²Ì¬ÎïÌå
-	if (mass != 0.0) {
-		sphere->calculateLocalInertia(mass, inertia);
-	}
-	//ÎªÎïÌåÔöÌíÔË¶¯×ËÌ¬ÐÅÏ¢
-	btMotionState* motion = new btDefaultMotionState(t);
-	btRigidBody::btRigidBodyConstructionInfo info(mass, motion, sphere);
-	btRigidBody* body = new btRigidBody(info);
-	//Ìí¼Óµ½ÊÀ½çÖÐ
-	body->setRestitution(btScalar(0.5));
-	world->addRigidBody(body);
-
-	body->getCollisionShape()->setUserIndex(bt_cacuts);
-
-
-
-	bodies.push_back(body);
-
-	return body;
-}
