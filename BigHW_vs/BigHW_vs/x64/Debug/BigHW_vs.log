@@ -1,5 +1,4 @@
 ﻿  main.cpp
-E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\GraphLine.hpp(58,1): warning C4267: “=”: 从“size_t”转换到“GLuint”，可能丢失数据
 E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\model.hpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
 E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\map.hpp(143,58): warning C4244: “参数”: 从“double”转换到“_Ty”，可能丢失数据
@@ -32,23 +31,87 @@ E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(21,19): warning C4244
 E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(22,19): warning C4244: “初始化”: 从“double”转换到“GLfloat”，可能丢失数据
 E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(23,43): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
 E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(28,43): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
-E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(87,29): warning C4244: “-=”: 从“double”转换到“T”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(86,29): warning C4244: “-=”: 从“double”转换到“T”，可能丢失数据
           with
           [
               T=float
           ]
-E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(215,15): warning C4244: “初始化”: 从“double”转换到“GLfloat”，可能丢失数据
-E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(216,20): warning C4244: “初始化”: 从“double”转换到“GLfloat”，可能丢失数据
-E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Game.hpp(51,17): warning C4305: “初始化”: 从“double”到“const float”截断
-E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Game.hpp(212,32): warning C4305: “=”: 从“double”到“T”截断
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(214,15): warning C4244: “初始化”: 从“double”转换到“GLfloat”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Particle.hpp(215,20): warning C4244: “初始化”: 从“double”转换到“GLfloat”，可能丢失数据
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Game.hpp(50,17): warning C4305: “初始化”: 从“double”到“const float”截断
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Game.hpp(211,32): warning C4305: “=”: 从“double”到“T”截断
           with
           [
               T=float
           ]
-E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Game.hpp(216,32): warning C4305: “=”: 从“double”到“T”截断
+E:\ComputerGraphics\BigHW_vs\BigHW_vs\include\Game.hpp(215,32): warning C4305: “=”: 从“double”到“T”截断
           with
           [
               T=float
           ]
 E:\ComputerGraphics\BigHW_vs\BigHW_vs\main.cpp(181,23): warning C4305: “参数”: 从“double”到“float”截断
+bullet_lib.lib(btCollisionObject.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btCollisionObject.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btCollisionWorld.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btCollisionWorld.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btRigidBody.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btRigidBody.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btAlignedAllocator.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btAlignedAllocator.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btCollisionDispatcher.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btCollisionDispatcher.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btBoxShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btBoxShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btDefaultCollisionConfiguration.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btDefaultCollisionConfiguration.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btDbvtBroadphase.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btDbvtBroadphase.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btDiscreteDynamicsWorld.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btDiscreteDynamicsWorld.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btSequentialImpulseConstraintSolver.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btSequentialImpulseConstraintSolver.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btPersistentManifold.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btPersistentManifold.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btManifoldResult.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btManifoldResult.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btCollisionShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btCollisionShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btConvexShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btConvexShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btGjkEpaPenetrationDepthSolver.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btGjkEpaPenetrationDepthSolver.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btConvexInternalShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btConvexInternalShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btSphereShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btSphereShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btTriangleCallback.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btTriangleCallback.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btBvhTriangleMeshShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btBvhTriangleMeshShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btHeightfieldTerrainShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btHeightfieldTerrainShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btRaycastCallback.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btRaycastCallback.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btConvexCast.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btConvexCast.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btSubSimplexConvexCast.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btSubSimplexConvexCast.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btGjkConvexCast.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btGjkConvexCast.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btContinuousConvexCollision.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btContinuousConvexCollision.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btQuickprof.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btQuickprof.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btDispatcher.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btDispatcher.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btPolyhedralConvexShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btPolyhedralConvexShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btConvexConvexAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btConvexConvexAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btEmptyCollisionAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btEmptyCollisionAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btConvexConcaveCollisionAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btConvexConcaveCollisionAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btCompoundCollisionAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btCompoundCollisionAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btCompoundCompoundCollisionAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btCompoundCompoundCollisionAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btConvexPlaneCollisionAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btConvexPlaneCollisionAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btBoxBoxCollisionAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btBoxBoxCollisionAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btSphereSphereCollisionAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btSphereSphereCollisionAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btSphereTriangleCollisionAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btSphereTriangleCollisionAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btMinkowskiPenetrationDepthSolver.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btMinkowskiPenetrationDepthSolver.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btDbvt.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btDbvt.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btOverlappingPairCache.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btOverlappingPairCache.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btSimulationIslandManager.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btSimulationIslandManager.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btTypedConstraint.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btTypedConstraint.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btConeTwistConstraint.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btConeTwistConstraint.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btGeneric6DofConstraint.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btGeneric6DofConstraint.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btVector3.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btVector3.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btVoronoiSimplexSolver.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btVoronoiSimplexSolver.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btGjkEpa2.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btGjkEpa2.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btTriangleMeshShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btTriangleMeshShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btQuantizedBvh.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btQuantizedBvh.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btOptimizedBvh.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btOptimizedBvh.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btConcaveShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btConcaveShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btGjkPairDetector.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btGjkPairDetector.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btConvexPolyhedron.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btConvexPolyhedron.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btConvexHullComputer.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btConvexHullComputer.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btGeometryUtil.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btGeometryUtil.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btActivatingCollisionAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btActivatingCollisionAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btPolyhedralContactClipping.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btPolyhedralContactClipping.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btCollisionAlgorithm.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btCollisionAlgorithm.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btSdfCollisionShape.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btSdfCollisionShape.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btHashedSimplePairCache.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btHashedSimplePairCache.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btBoxBoxDetector.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btBoxBoxDetector.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(SphereTriangleDetector.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(SphereTriangleDetector.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btUnionFind.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btUnionFind.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+bullet_lib.lib(btMiniSDF.obj) : warning LNK4099: 未找到 PDB“”(使用“bullet_lib.lib(btMiniSDF.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
   BigHW_vs.vcxproj -> E:\ComputerGraphics\BigHW_vs\x64\Debug\BigHW_vs.exe

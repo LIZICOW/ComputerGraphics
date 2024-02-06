@@ -4,7 +4,7 @@
 #include "../include/camera.h"
 #include "../include/mesh.hpp"
 #define STB_IMAGE_IMPLEMENTATION
-#include "../../src/stb_image.h"
+#include "stb_image.h"
 #include <string>
 #include <vector>
 #include <fstream>
@@ -98,12 +98,9 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
-        // the node object only contains indices to index the actual objects in the scene.
-        // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
         meshes.push_back(processMesh(mesh, scene));
     }
-    // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
         processNode(node->mChildren[i], scene);

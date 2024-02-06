@@ -18,10 +18,10 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\glad.c">
+    <ClCompile Include="src\PhysicalEngine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\PhysicalEngine.cpp">
+    <ClCompile Include="src\glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -30,9 +30,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\Game.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GraphLine.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\manResource.hpp">
@@ -53,16 +50,13 @@
     <ClInclude Include="include\texture.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\stb_image.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\PhysicalEngine.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\Particle.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\TextRenderer.hpp">
+    <ClInclude Include="include\stb_image.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

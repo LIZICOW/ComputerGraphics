@@ -81,8 +81,7 @@ void ParticleGenerator::Update(GLfloat dt, bool jump)
         Particle& p = this->particles[i];
         p.Life -= dt * p.lifeCost; // reduce life
         if (p.Life > 0.0f)
-        {	// particle is alive, thus update
-            //std::cout << p.Position.x << ' ' << p.Position.y << ' ' << p.Position.z << ' ' << '\n';
+        {	
             p.Position += p.Velocity * dt;
             p.Color.a -= dt * 0.1;
         }

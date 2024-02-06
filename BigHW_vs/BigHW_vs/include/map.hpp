@@ -121,7 +121,7 @@ private:
     std::vector<GLfloat> points;
     std::vector<GLuint> indices;
     int waterWidth = 50;
-    int waterLength = 1000;
+    int waterLength = 2000;
     unsigned int VBO, EBO, VAO;
     glm::vec3 pos;
     struct GerstnerWave

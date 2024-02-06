@@ -11,7 +11,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "../include/GraphLine.hpp"
 #include "../include/model.hpp"
 #include "../include/map.hpp"
 #include "../include/Particle.hpp"

@@ -19,15 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\PhysicalEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\stb_image.h" />
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\Game.hpp" />
-    <ClInclude Include="include\GraphLine.hpp" />
     <ClInclude Include="include\manResource.hpp" />
     <ClInclude Include="include\map.hpp" />
     <ClInclude Include="include\mesh.hpp" />
@@ -35,7 +33,7 @@
     <ClInclude Include="include\Particle.hpp" />
     <ClInclude Include="include\PhysicalEngine.h" />
     <ClInclude Include="include\shader.hpp" />
-    <ClInclude Include="include\TextRenderer.hpp" />
+    <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="include\texture.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -107,8 +105,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\ComputerGraphics\include;$(IncludePath)</IncludePath>
-    <ReferencePath>E:\ComputerGraphics\lib;$(ReferencePath)</ReferencePath>
+    <IncludePath>$(ProjectDir)\sys_include;$(IncludePath)</IncludePath>
+    <ReferencePath>$(ProjectDir)\lib;$(ReferencePath)</ReferencePath>
     <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -149,7 +147,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\ComputerGraphics\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>bullet_lib.lib;kernel32.lib;glfw3.lib;opengl32.lib;assimp-vc140-mt.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
